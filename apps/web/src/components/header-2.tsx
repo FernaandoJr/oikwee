@@ -1,7 +1,7 @@
 'use client';
 import { MenuToggleIcon } from '@/components/menu-toggle-icon';
+import { useScroll } from '@/components/sidebar/use-scroll';
 import { Button, buttonVariants } from '@/components/ui/button';
-import { useScroll } from '@/components/use-scroll';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@repo/i18n';
 import Image from 'next/image';

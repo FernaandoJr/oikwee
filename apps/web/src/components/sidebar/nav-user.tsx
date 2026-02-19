@@ -18,7 +18,6 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { ModeToggle } from './ui/mode-toggle';
 
 export function NavUser({
   user,
@@ -95,7 +94,6 @@ export function NavUser({
             <DropdownMenuItem>
               <LogOut />
               Log out
-              <ModeToggle />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
