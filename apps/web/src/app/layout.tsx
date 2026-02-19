@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   description: 'oiKonomos is a platform',
 };
 
-const isProduction = process.env.NEXT_PUBLIC_ENV === 'P';
+const isDevelopment = process.env.NEXT_PUBLIC_ENV === 'D';
 
 export default function RootLayout({
   children,
@@ -29,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {!isProduction && (
+        {isDevelopment && (
           <Script
             src="//unpkg.com/react-scan/dist/auto.global.js"
             crossOrigin="anonymous"
