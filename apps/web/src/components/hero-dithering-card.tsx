@@ -1,7 +1,7 @@
 import { useTranslation } from '@repo/i18n';
 import { ArrowRight } from 'lucide-react';
 import { Suspense, lazy } from 'react';
-import { Header } from './header-2';
+import { Header } from './header';
 
 const Dithering = lazy(() =>
   import('@paper-design/shaders-react').then((mod) => ({ default: mod.Dithering })),
