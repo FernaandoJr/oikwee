@@ -1,10 +1,21 @@
 {
   "title": "oiKwee",
   "home": "Home",
-  "hero": {
-    "headline": "Menos conta,",
-    "headlineAccent": "mais controle.",
-    "description": "Um painel para seus gastos. Simples de ver, fácil de controlar.",
-    "cta": "Começar agora"
-  }
+  "lessGuesswork": "Menos conta,",
+  "moreControl": "mais controle.",
+  "dashboardForYourExpenses": "Um painel para seus gastos. Simples de ver, fácil de controlar.",
+  "getStarted": "Começar agora",
+  "welcome": "Bem-vindo",
+  "accessYourAccountAndContinue": "Acesse sua conta e continue sua jornada conosco",
+  "emailAddress": "Endereço de Email",
+  "enterYourEmailAddress": "Digite seu endereço de email",
+  "password": "Senha",
+  "enterYourPassword": "Digite sua senha",
+  "keepMeSignedIn": "Manter-me conectado",
+  "resetPassword": "Redefinir senha",
+  "signIn": "Entrar",
+  "orContinueWith": "Ou continue com",
+  "continueWithGoogle": "Continuar com Google",
+  "newToOurPlatform": "Novo em nossa plataforma?",
+  "createAccount": "Criar Conta"
 }

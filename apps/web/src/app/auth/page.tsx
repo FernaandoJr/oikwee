@@ -1,186 +1,145 @@
 'use client';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from '@/components/ui/input-group';
+import { Label } from '@/components/ui/label';
+import { ImageDithering } from '@paper-design/shaders-react';
+import { useTranslation } from '@repo/i18n';
 import { Eye, EyeOff } from 'lucide-react';
+import Link from 'next/link';
 import React, { useState } from 'react';
 
-// --- HELPER COMPONENTS (ICONS) ---
-
-const GoogleIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 48 48">
-    <path
-      fill="#FFC107"
-      d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s12-5.373 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-2.641-.21-5.236-.611-7.743z"
-    />
-    <path
-      fill="#FF3D00"
-      d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"
-    />
-    <path
-      fill="#4CAF50"
-      d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"
-    />
-    <path
-      fill="#1976D2"
-      d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.166-4.087 5.571l6.19 5.238C42.022 35.026 44 30.038 44 24c0-2.641-.21-5.236-.611-7.743z"
-    />
-  </svg>
-);
-
-// --- TYPE DEFINITIONS ---
-
-export interface Testimonial {
-  avatarSrc: string;
-  name: string;
-  handle: string;
-  text: string;
-}
-
-interface SignInPageProps {
-  title?: React.ReactNode;
-  description?: React.ReactNode;
-  heroImageSrc?: string;
-  testimonials?: Testimonial[];
-  onSignIn?: (event: React.FormEvent<HTMLFormElement>) => void;
-  onGoogleSignIn?: () => void;
-  onResetPassword?: () => void;
-  onCreateAccount?: () => void;
-}
-
-// --- SUB-COMPONENTS ---
-
-const GlassInputWrapper = ({ children }: { children: React.ReactNode }) => (
-  <div className="border-border bg-foreground/5 rounded-2xl border backdrop-blur-sm transition-colors focus-within:border-violet-400/70 focus-within:bg-violet-500/10">
-    {children}
-  </div>
-);
-
-const TestimonialCard = ({ testimonial, delay }: { testimonial: Testimonial; delay: string }) => (
-  <div
-    className={`animate-testimonial ${delay} bg-card/40 flex w-64 items-start gap-3 rounded-3xl border border-white/10 p-5 backdrop-blur-xl dark:bg-zinc-800/40`}
-  >
-    <img src={testimonial.avatarSrc} className="h-10 w-10 rounded-2xl object-cover" alt="avatar" />
-    <div className="text-sm leading-snug">
-      <p className="flex items-center gap-1 font-medium">{testimonial.name}</p>
-      <p className="text-muted-foreground">{testimonial.handle}</p>
-      <p className="text-foreground/80 mt-1">{testimonial.text}</p>
-    </div>
-  </div>
-);
-
-// --- MAIN COMPONENT ---
-
-export default function SignInPage({
-  title = <span className="text-foreground font-light tracking-tighter">Welcome</span>,
-  description = 'Access your account and continue your journey with us',
-  heroImageSrc,
-  testimonials = [],
-  onSignIn,
-  onGoogleSignIn,
-  onResetPassword,
-  onCreateAccount,
-}: SignInPageProps) {
+export default function SignInPage() {
+  const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const heroImageSrc = '/images/flower_aspect1.png';
+
+  const handleSignIn = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+  };
+
+  const handleGoogleSignIn = () => {
+    // TODO: Implement Google sign in
+  };
+
+  const handleResetPassword = () => {
+    // TODO: Implement reset password
+  };
+
+  const handleCreateAccount = () => {
+    // TODO: Implement create account
+  };
 
   return (
-    <div className="font-geist flex h-[100dvh] w-[100dvw] flex-col md:flex-row">
-      {/* Left column: sign-in form */}
+    <div className="font-geist flex h-dvh w-dvw flex-col md:flex-row">
       <section className="flex flex-1 items-center justify-center p-8">
         <div className="w-full max-w-md">
           <div className="flex flex-col gap-6">
             <h1 className="animate-element animate-delay-100 text-4xl leading-tight font-semibold md:text-5xl">
-              {title}
+              <span className="text-foreground font-light tracking-tighter">{t('welcome')}</span>
             </h1>
-            <p className="animate-element animate-delay-200 text-muted-foreground">{description}</p>
+            <p className="animate-element animate-delay-200 text-muted-foreground">
+              {t('accessYourAccountAndContinue')}
+            </p>
 
-            <form className="space-y-5" onSubmit={onSignIn}>
-              <div className="animate-element animate-delay-300">
-                <label className="text-muted-foreground text-sm font-medium">Email Address</label>
-                <GlassInputWrapper>
-                  <input
-                    name="email"
-                    type="email"
-                    placeholder="Enter your email address"
-                    className="w-full rounded-2xl bg-transparent p-4 text-sm focus:outline-none"
-                  />
-                </GlassInputWrapper>
+            <form className="space-y-5" onSubmit={handleSignIn}>
+              <div className="animate-element animate-delay-300 flex flex-col gap-2">
+                <Label className="text-muted-foreground text-sm font-medium">
+                  {t('emailAddress')}
+                </Label>
+                <Input
+                  name="email"
+                  type="email"
+                  placeholder={t('enterYourEmailAddress')}
+                  className="w-full p-4 text-sm shadow-none"
+                />
               </div>
 
-              <div className="animate-element animate-delay-400">
-                <label className="text-muted-foreground text-sm font-medium">Password</label>
-                <GlassInputWrapper>
-                  <div className="relative">
-                    <input
-                      name="password"
-                      type={showPassword ? 'text' : 'password'}
-                      placeholder="Enter your password"
-                      className="w-full rounded-2xl bg-transparent p-4 pr-12 text-sm focus:outline-none"
-                    />
-                    <button
+              <div className="animate-element animate-delay-400 flex flex-col gap-2">
+                <Label className="text-muted-foreground text-sm font-medium">{t('password')}</Label>
+                <InputGroup className="h-auto">
+                  <InputGroupInput
+                    name="password"
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder={t('enterYourPassword')}
+                    className="p-4 text-sm"
+                  />
+                  <InputGroupAddon align="inline-end">
+                    <InputGroupButton
                       type="button"
+                      variant="ghost"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-3 flex items-center"
                     >
                       {showPassword ? (
                         <EyeOff className="text-muted-foreground hover:text-foreground h-5 w-5 transition-colors" />
                       ) : (
                         <Eye className="text-muted-foreground hover:text-foreground h-5 w-5 transition-colors" />
                       )}
-                    </button>
-                  </div>
-                </GlassInputWrapper>
+                    </InputGroupButton>
+                  </InputGroupAddon>
+                </InputGroup>
               </div>
 
               <div className="animate-element animate-delay-500 flex items-center justify-between text-sm">
-                <label className="flex cursor-pointer items-center gap-3">
-                  <input type="checkbox" name="rememberMe" className="custom-checkbox" />
-                  <span className="text-foreground/90">Keep me signed in</span>
-                </label>
-                <a
+                <Label className="flex cursor-pointer items-center gap-3">
+                  <Checkbox
+                    checked={rememberMe}
+                    onCheckedChange={(checked) => setRememberMe(checked === true)}
+                    name="rememberMe"
+                  />
+                  <span className="text-foreground/90">{t('keepMeSignedIn')}</span>
+                </Label>
+                <Link
                   href="#"
                   onClick={(e) => {
                     e.preventDefault();
-                    onResetPassword?.();
+                    handleResetPassword();
                   }}
-                  className="text-violet-400 transition-colors hover:underline"
+                  className="text-primary transition-colors hover:underline"
                 >
-                  Reset password
-                </a>
+                  {t('resetPassword')}
+                </Link>
               </div>
 
-              <button
-                type="submit"
-                className="animate-element animate-delay-600 bg-primary text-primary-foreground hover:bg-primary/90 w-full rounded-2xl py-4 font-medium transition-colors"
-              >
-                Sign In
-              </button>
+              <Button type="submit" className="animate-element animate-delay-600 w-full py-4">
+                {t('signIn')}
+              </Button>
             </form>
 
             <div className="animate-element animate-delay-700 relative flex items-center justify-center">
               <span className="border-border w-full border-t"></span>
               <span className="text-muted-foreground bg-background absolute px-4 text-sm">
-                Or continue with
+                {t('orContinueWith')}
               </span>
             </div>
 
-            <button
-              onClick={onGoogleSignIn}
-              className="animate-element animate-delay-800 border-border hover:bg-secondary flex w-full items-center justify-center gap-3 rounded-2xl border py-4 transition-colors"
+            <Button
+              variant="outline"
+              onClick={handleGoogleSignIn}
+              className="animate-element animate-delay-800 w-full py-4"
             >
-              <GoogleIcon />
-              Continue with Google
-            </button>
+              {t('continueWithGoogle')}
+            </Button>
 
             <p className="animate-element animate-delay-900 text-muted-foreground text-center text-sm">
-              New to our platform?{' '}
-              <a
+              {t('newToOurPlatform')}{' '}
+              <Link
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
-                  onCreateAccount?.();
+                  handleCreateAccount();
                 }}
-                className="text-violet-400 transition-colors hover:underline"
+                className="text-primary transition-colors hover:underline"
               >
-                Create Account
-              </a>
+                {t('createAccount')}
+              </Link>
             </p>
           </div>
         </div>
@@ -189,25 +148,15 @@ export default function SignInPage({
       {/* Right column: hero image + testimonials */}
       {heroImageSrc && (
         <section className="relative hidden flex-1 p-4 md:block">
-          <div
-            className="animate-slide-right animate-delay-300 absolute inset-4 rounded-3xl bg-cover bg-center"
-            style={{ backgroundImage: `url(${heroImageSrc})` }}
-          ></div>
-          {testimonials.length > 0 && (
-            <div className="absolute bottom-8 left-1/2 flex w-full -translate-x-1/2 justify-center gap-4 px-8">
-              <TestimonialCard testimonial={testimonials[0]} delay="animate-delay-1000" />
-              {testimonials[1] && (
-                <div className="hidden xl:flex">
-                  <TestimonialCard testimonial={testimonials[1]} delay="animate-delay-1200" />
-                </div>
-              )}
-              {testimonials[2] && (
-                <div className="hidden 2xl:flex">
-                  <TestimonialCard testimonial={testimonials[2]} delay="animate-delay-1400" />
-                </div>
-              )}
-            </div>
-          )}
+          <ImageDithering
+            image={heroImageSrc}
+            className="animate-slide-right animate-delay-300 absolute inset-4 rounded-lg"
+            fit="cover"
+            originalColors
+            type="8x8"
+            size={2}
+            colorSteps={7}
+          />
         </section>
       )}
     </div>

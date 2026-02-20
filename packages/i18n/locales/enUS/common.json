@@ -1,9 +1,20 @@
 {
   "home": "Home",
-  "hero": {
-    "headline": "Less guesswork,",
-    "headlineAccent": "more control.",
-    "description": "A dashboard for your expenses. Easy to see, easy to control.",
-    "cta": "Get started"
-  }
+  "lessGuesswork": "Less guesswork,",
+  "moreControl": "more control.",
+  "dashboardForYourExpenses": "A dashboard for your expenses. Easy to see, easy to control.",
+  "getStarted": "Get started",
+  "welcome": "Welcome",
+  "accessYourAccountAndContinue": "Access your account and continue your journey with us",
+  "emailAddress": "Email Address",
+  "enterYourEmailAddress": "Enter your email address",
+  "password": "Password",
+  "enterYourPassword": "Enter your password",
+  "keepMeSignedIn": "Keep me signed in",
+  "resetPassword": "Reset password",
+  "signIn": "Sign In",
+  "orContinueWith": "Or continue with",
+  "continueWithGoogle": "Continue with Google",
+  "newToOurPlatform": "New to our platform?",
+  "createAccount": "Create Account"
 }

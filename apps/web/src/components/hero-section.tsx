@@ -30,16 +30,16 @@ export function HeroSection() {
 
           <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center px-6 text-center">
             <h2 className="text-foreground mb-8 font-serif text-5xl leading-[1.05] font-medium tracking-tight md:text-7xl lg:text-8xl">
-              {t('hero.headline')} <br />
-              <span className="text-foreground/80">{t('hero.headlineAccent')}</span>
+              {t('lessGuesswork')} <br />
+              <span className="text-foreground/80">{t('moreControl')}</span>
             </h2>
 
             <p className="text-muted-foreground mb-12 max-w-2xl text-lg leading-relaxed md:text-xl">
-              {t('hero.description')}
+              {t('dashboardForYourExpenses')}
             </p>
 
             <button className="group bg-primary text-primary-foreground hover:bg-primary/90 hover:ring-primary/20 relative inline-flex h-14 cursor-pointer items-center justify-center gap-3 overflow-hidden rounded-full px-12 text-base font-medium transition-all duration-300 hover:scale-105 hover:ring-4 active:scale-95">
-              <span className="relative z-10">{t('hero.cta')}</span>
+              <span className="relative z-10">{t('getStarted')}</span>
               <ArrowRight className="relative z-10 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
             </button>
           </div>
