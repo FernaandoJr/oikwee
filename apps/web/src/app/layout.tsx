@@ -15,8 +15,8 @@ const firaCode = Fira_Code({
 });
 
 export const metadata: Metadata = {
-  title: 'oiKonomos',
-  description: 'oiKonomos is a platform',
+  title: 'oiKwee',
+  description: 'oiKwee is a platform',
 };
 
 const isDevelopment = process.env.NEXT_PUBLIC_ENV === 'D';

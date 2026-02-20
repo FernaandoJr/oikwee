@@ -1,5 +1,5 @@
 {
-  "name": "oikonomos",
+  "name": "oikwee",
   "private": true,
   "scripts": {
     "build": "turbo run build",
