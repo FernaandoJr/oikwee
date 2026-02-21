@@ -17,5 +17,8 @@
   "orContinueWith": "Ou continue com",
   "continueWithGoogle": "Continuar com Google",
   "newToOurPlatform": "Novo em nossa plataforma?",
-  "createAccount": "Criar Conta"
+  "createAccount": "Criar Conta",
+  "validationEmailInvalid": "Endereço de email inválido",
+  "validationEmailRequired": "Email é obrigatório",
+  "validationPasswordMin": "A senha deve ter pelo menos 6 caracteres"
 }

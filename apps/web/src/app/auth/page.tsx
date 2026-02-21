@@ -1,6 +1,14 @@
 'use client';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import {
   InputGroup,
@@ -8,21 +16,46 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from '@/components/ui/input-group';
-import { Label } from '@/components/ui/label';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { ImageDithering } from '@paper-design/shaders-react';
 import { useTranslation } from '@repo/i18n';
 import { Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+
+interface SignInFormValues {
+  email: string;
+  password: string;
+  rememberMe: boolean;
+}
 
 export default function SignInPage() {
   const { t } = useTranslation();
-  const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
   const heroImageSrc = '/images/flower_aspect1.png';
 
-  const handleSignIn = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const signInSchema = useMemo(
+    () =>
+      z.object({
+        email: z.email(t('validationEmailInvalid')).min(1, t('validationEmailRequired')),
+        password: z.string().min(6, t('validationPasswordMin')),
+        rememberMe: z.boolean(),
+      }),
+    [t],
+  );
+
+  const form = useForm<SignInFormValues>({
+    resolver: zodResolver(signInSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+      rememberMe: false,
+    },
+  });
+
+  const handleSignIn = (values: SignInFormValues) => {
+    console.log(values);
   };
 
   const handleGoogleSignIn = () => {
@@ -49,69 +82,81 @@ export default function SignInPage() {
               {t('accessYourAccountAndContinue')}
             </p>
 
-            <form className="space-y-5" onSubmit={handleSignIn}>
-              <div className="animate-element animate-delay-300 flex flex-col gap-2">
-                <Label className="text-muted-foreground text-sm font-medium">
-                  {t('emailAddress')}
-                </Label>
-                <Input
+            <Form {...form}>
+              <form className="space-y-5" onSubmit={form.handleSubmit(handleSignIn)}>
+                <FormField
+                  control={form.control}
                   name="email"
-                  type="email"
-                  placeholder={t('enterYourEmailAddress')}
-                  className="w-full p-4 text-sm shadow-none"
+                  render={({ field }) => (
+                    <FormItem className="animate-element animate-delay-300">
+                      <FormLabel className="text-muted-foreground text-sm font-medium">
+                        {t('emailAddress')}
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder={t('enterYourEmailAddress')}
+                          className="w-full p-4 text-sm shadow-none"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
 
-              <div className="animate-element animate-delay-400 flex flex-col gap-2">
-                <Label className="text-muted-foreground text-sm font-medium">{t('password')}</Label>
-                <InputGroup className="h-auto">
-                  <InputGroupInput
-                    name="password"
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder={t('enterYourPassword')}
-                    className="p-4 text-sm"
-                  />
-                  <InputGroupAddon align="inline-end">
-                    <InputGroupButton
-                      type="button"
-                      variant="ghost"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? (
-                        <EyeOff className="text-muted-foreground hover:text-foreground h-5 w-5 transition-colors" />
-                      ) : (
-                        <Eye className="text-muted-foreground hover:text-foreground h-5 w-5 transition-colors" />
-                      )}
-                    </InputGroupButton>
-                  </InputGroupAddon>
-                </InputGroup>
-              </div>
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem className="animate-element animate-delay-400">
+                      <FormLabel className="text-muted-foreground text-sm font-medium">
+                        {t('password')}
+                      </FormLabel>
+                      <FormControl>
+                        <PasswordInput
+                          value={field.value}
+                          onChange={field.onChange}
+                          onBlur={field.onBlur}
+                          placeholder={t('enterYourPassword')}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <div className="animate-element animate-delay-500 flex items-center justify-between text-sm">
-                <Label className="flex cursor-pointer items-center gap-3">
-                  <Checkbox
-                    checked={rememberMe}
-                    onCheckedChange={(checked) => setRememberMe(checked === true)}
+                <div className="animate-element animate-delay-500 flex items-center justify-between text-sm">
+                  <FormField
+                    control={form.control}
                     name="rememberMe"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex cursor-pointer items-center gap-3">
+                          <FormControl>
+                            <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                          </FormControl>
+                          <span className="text-foreground/90">{t('keepMeSignedIn')}</span>
+                        </FormLabel>
+                      </FormItem>
+                    )}
                   />
-                  <span className="text-foreground/90">{t('keepMeSignedIn')}</span>
-                </Label>
-                <Link
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleResetPassword();
-                  }}
-                  className="text-primary transition-colors hover:underline"
-                >
-                  {t('resetPassword')}
-                </Link>
-              </div>
+                  <Link
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleResetPassword();
+                    }}
+                    className="text-primary transition-colors hover:underline"
+                  >
+                    {t('resetPassword')}
+                  </Link>
+                </div>
 
-              <Button type="submit" className="animate-element animate-delay-600 w-full py-4">
-                {t('signIn')}
-              </Button>
-            </form>
+                <Button type="submit" className="animate-element animate-delay-600 w-full py-4">
+                  {t('signIn')}
+                </Button>
+              </form>
+            </Form>
 
             <div className="animate-element animate-delay-700 relative flex items-center justify-center">
               <span className="border-border w-full border-t"></span>
@@ -145,7 +190,6 @@ export default function SignInPage() {
         </div>
       </section>
 
-      {/* Right column: hero image + testimonials */}
       {heroImageSrc && (
         <section className="relative hidden flex-1 p-4 md:block">
           <ImageDithering
@@ -162,3 +206,43 @@ export default function SignInPage() {
     </div>
   );
 }
+
+const PasswordInput = ({
+  value,
+  onChange,
+  onBlur,
+  placeholder,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  onBlur: () => void;
+  placeholder: string;
+}) => {
+  const [showPassword, setShowPassword] = useState(false);
+
+  return (
+    <InputGroup className="h-auto">
+      <InputGroupInput
+        type={showPassword ? 'text' : 'password'}
+        placeholder={placeholder}
+        className="p-4 text-sm"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        onBlur={onBlur}
+      />
+      <InputGroupAddon align="inline-end">
+        <InputGroupButton
+          type="button"
+          variant="ghost"
+          onClick={() => setShowPassword(!showPassword)}
+        >
+          {showPassword ? (
+            <EyeOff className="text-muted-foreground hover:text-foreground h-5 w-5 transition-colors" />
+          ) : (
+            <Eye className="text-muted-foreground hover:text-foreground h-5 w-5 transition-colors" />
+          )}
+        </InputGroupButton>
+      </InputGroupAddon>
+    </InputGroup>
+  );
+};

@@ -19,8 +19,6 @@ export const metadata: Metadata = {
   description: 'oiKwee is a platform',
 };
 
-const isDevelopment = process.env.NEXT_PUBLIC_ENV === 'D';
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -29,13 +27,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {isDevelopment && (
-          <Script
-            src="//unpkg.com/react-scan/dist/auto.global.js"
-            crossOrigin="anonymous"
-            strategy="beforeInteractive"
-          />
-        )}
+        <Script
+          src="//unpkg.com/react-scan/dist/auto.global.js"
+          crossOrigin="anonymous"
+          strategy="beforeInteractive"
+        />
       </head>
       <body className={`${outfit.variable} ${firaCode.variable} antialiased`}>
         <ThemeProvider
