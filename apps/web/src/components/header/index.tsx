@@ -54,7 +54,7 @@ export function Header({ disableSticky = false }: HeaderProps) {
           },
         )}
       >
-        <div className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2">
           <Image
             src="/logo/logo.svg"
             alt="Logo"
@@ -63,7 +63,7 @@ export function Header({ disableSticky = false }: HeaderProps) {
             className="pointer-events-none"
           />
           <span className="text-lg font-medium">oiKwee</span>
-        </div>
+        </Link>
         <div className="hidden items-center gap-2 md:flex">
           {headerLinks.map((link, i) => (
             <Link key={i} className={buttonVariants({ variant: 'ghost' })} href={link.href}>
