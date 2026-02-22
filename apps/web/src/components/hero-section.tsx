@@ -5,9 +5,7 @@ import { useTheme } from 'next-themes';
 
 export function HeroSection() {
   const { t } = useTranslation();
-
-  const { systemTheme } = useTheme();
-  const currentTheme = systemTheme === 'dark' ? 'dark' : 'light';
+  const { theme } = useTheme();
 
   return (
     <section className="w-full">
@@ -16,7 +14,7 @@ export function HeroSection() {
           <div className="absolute inset-0 z-0">
             <div className="pointer-events-none absolute inset-0 opacity-40 mix-blend-multiply">
               <Dithering
-                colorBack={currentTheme === 'dark' ? '#000000' : '#ffffff'}
+                colorBack={theme === 'dark' ? '#000000' : '#ffffff'}
                 colorFront="#aff33e"
                 shape="warp"
                 type="4x4"
@@ -25,7 +23,7 @@ export function HeroSection() {
                 minPixelRatio={1}
               />
             </div>
-            <div className="from-background pointer-events-none absolute inset-0 bg-gradient-to-t to-transparent" />
+            <div className="from-background pointer-events-none absolute inset-0 bg-gradient-to-t via-transparent to-transparent" />
           </div>
 
           <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center px-6 text-center">

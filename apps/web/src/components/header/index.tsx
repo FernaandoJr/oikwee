@@ -1,33 +1,32 @@
 'use client';
 import { MenuToggleIcon } from '@/components/menu-toggle-icon';
-import { useScroll } from '@/components/sidebar/use-scroll';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { headerLinks } from '@/constants/header-links';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@repo/i18n';
 import Image from 'next/image';
 import Link from 'next/link';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { ModeToggle } from '../dark-mode';
+import { useScroll } from '../sidebar/use-scroll';
 
 interface HeaderProps {
   disableSticky?: boolean;
+  forceBlur?: boolean;
 }
 
-export function Header({ disableSticky = false }: HeaderProps) {
-  const [open, setOpen] = React.useState(false);
+export function Header({ disableSticky = false, forceBlur = false }: HeaderProps) {
+  const [open, setOpen] = useState(false);
   const scrolled = useScroll(10);
   const { t } = useTranslation();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (open) {
-      // Disable scroll
       document.body.style.overflow = 'hidden';
     } else {
-      // Re-enable scroll
       document.body.style.overflow = '';
     }
-
-    // Cleanup when component unmounts (important for Next.js)
     return () => {
       document.body.style.overflow = '';
     };
@@ -36,82 +35,105 @@ export function Header({ disableSticky = false }: HeaderProps) {
   return (
     <header
       className={cn(
-        'z-50 mx-auto w-full max-w-5xl border-b border-transparent select-none md:transition-all md:ease-out',
+        'z-50 w-full border-b border-transparent',
         !disableSticky && 'fixed top-0 right-0 left-0',
         disableSticky && 'relative',
         {
-          'bg-background/95 supports-[backdrop-filter]:bg-background/50 border-border rounded-b-md backdrop-blur-lg md:max-w-4xl md:shadow':
-            scrolled && !open && !disableSticky,
-          'bg-background/90': open,
+          'bg-background/95 supports-[backdrop-filter]:bg-background/50 border-border backdrop-blur-lg':
+            (scrolled && !disableSticky) || forceBlur,
         },
       )}
     >
-      <nav
-        className={cn(
-          'flex h-14 w-full items-center justify-between px-4 md:h-12 md:transition-all md:ease-out',
-          {
-            'md:px-2': scrolled && !disableSticky,
-          },
-        )}
-      >
-        <Link href="/" className="flex items-center gap-2">
-          <Image
-            src="/logo/logo.svg"
-            alt="Logo"
-            width={24}
-            height={24}
-            className="pointer-events-none"
-          />
-          <span className="text-lg font-medium">oiKwee</span>
-        </Link>
-        <div className="hidden items-center gap-2 md:flex">
-          {headerLinks.map((link, i) => (
-            <Link key={i} className={buttonVariants({ variant: 'ghost' })} href={link.href}>
-              {link.label}
-            </Link>
-          ))}
-          <Link href="/auth">
-            <Button variant="outline" className="cursor-pointer">
-              {t('signIn')}
-            </Button>
+      <nav className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-4">
+        <div className="flex items-center gap-5">
+          <Link href="/" className="flex items-center gap-2 rounded-md p-2">
+            <Image src="/logo/logo.svg" alt="Logo" width={24} height={24} className="h-4" />
+            <span className="text-lg font-medium">oiKwee</span>
           </Link>
-        </div>
-        <Button size="icon" variant="outline" onClick={() => setOpen(!open)} className="md:hidden">
-          <MenuToggleIcon open={open} className="size-5" duration={300} />
-        </Button>
-      </nav>
-
-      <div
-        className={cn(
-          'bg-background/90 fixed top-14 right-0 bottom-0 left-0 z-50 flex flex-col overflow-hidden border-y md:hidden',
-          open ? 'block' : 'hidden',
-        )}
-      >
-        <div
-          data-slot={open ? 'open' : 'closed'}
-          className={cn(
-            'data-[slot=open]:animate-in data-[slot=open]:zoom-in-95 data-[slot=closed]:animate-out data-[slot=closed]:zoom-out-95 ease-out',
-            'flex h-full w-full flex-col justify-between gap-y-2 p-4',
-          )}
-        >
-          <div className="grid gap-y-2">
+          <div className="hidden items-center gap-1 md:flex">
             {headerLinks.map((link) => (
               <Link
                 key={link.label}
-                className={cn(buttonVariants({ variant: 'ghost' }), 'justify-start')}
+                className={cn(buttonVariants({ variant: 'ghost' }), 'rounded-md')}
                 href={link.href}
               >
                 {link.label}
               </Link>
             ))}
           </div>
+        </div>
+        <div className="hidden items-center gap-2 md:flex">
           <Link href="/auth">
-            <Button variant="default" className="w-full cursor-pointer">
+            <Button variant="outline">{t('signIn')}</Button>
+          </Link>
+          <Button>{t('getStarted')}</Button>
+          <ModeToggle />
+        </div>
+        <Button
+          size="icon"
+          variant="outline"
+          onClick={() => setOpen(!open)}
+          className="md:hidden"
+          aria-expanded={open}
+          aria-controls="mobile-menu"
+          aria-label="Toggle menu"
+        >
+          <MenuToggleIcon open={open} className="size-5" duration={300} />
+        </Button>
+      </nav>
+      <MobileMenu open={open} className="flex flex-col justify-between gap-2 overflow-y-auto">
+        <div className="grid w-full flex-col gap-y-2">
+          {headerLinks.map((link) => (
+            <Link
+              key={link.label}
+              className={cn(buttonVariants({ variant: 'ghost' }), 'justify-start')}
+              href={link.href}
+              onClick={() => setOpen(false)}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </div>
+        <div className="flex flex-col gap-2">
+          <Link href="/auth" onClick={() => setOpen(false)}>
+            <Button variant="outline" className="w-full bg-transparent">
               {t('signIn')}
             </Button>
           </Link>
+          <Button className="w-full">{t('getStarted')}</Button>
         </div>
-      </div>
+      </MobileMenu>
     </header>
+  );
+}
+
+type MobileMenuProps = React.ComponentProps<'div'> & {
+  open: boolean;
+};
+
+function MobileMenu({ open, children, className, ...props }: MobileMenuProps) {
+  if (!open || typeof window === 'undefined') return null;
+
+  return createPortal(
+    <div
+      id="mobile-menu"
+      className={cn(
+        'bg-background/95 supports-[backdrop-filter]:bg-background/50 backdrop-blur-lg',
+        'fixed top-14 right-0 bottom-0 left-0 z-40 flex flex-col overflow-hidden border-y md:hidden',
+      )}
+    >
+      <div
+        data-slot={open ? 'open' : 'closed'}
+        className={cn(
+          'data-[slot=open]:animate-in data-[slot=open]:zoom-in-97 ease-out',
+          'size-full p-4',
+          className,
+        )}
+        {...props}
+      >
+        {children}
+      </div>
+    </div>,
+    document.body,
   );
 }

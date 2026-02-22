@@ -7,6 +7,6 @@ export const headerLinks = [
   },
   {
     label: t('about'),
-    href: '#',
+    href: '#about',
   },
 ];
