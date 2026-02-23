@@ -21,7 +21,9 @@ const resources = {
 const getInitialLanguage = (): string => {
   if (typeof document !== 'undefined') {
     const cookies = document.cookie.split(';');
-    const localeCookie = cookies.find((c) => c.trim().startsWith('NEXT_LOCALE='));
+    const localeCookie = cookies.find((c) =>
+      c.trim().startsWith('NEXT_LOCALE='),
+    );
     if (localeCookie) {
       const value = localeCookie.split('=')[1];
       if (value) return value.trim();

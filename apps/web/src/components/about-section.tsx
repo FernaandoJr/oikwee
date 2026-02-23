@@ -34,7 +34,9 @@ export function AboutSection() {
     <section id="about" className="py-8 sm:py-16 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12 max-w-6xl space-y-4 text-center md:mb-16 lg:mb-24">
-          <p className="text-primary text-sm font-medium uppercase">{t('aboutLabel')}</p>
+          <p className="text-primary text-sm font-medium uppercase">
+            {t('aboutLabel')}
+          </p>
           <h2 className="text-foreground text-2xl font-semibold md:text-3xl lg:text-4xl">
             {t('aboutTitle')}
           </h2>
@@ -59,7 +61,9 @@ export function AboutSection() {
                     {icon}
                     <span className="text-foreground">{t(titleKey)}</span>
                   </div>
-                  <p className="text-muted-foreground mt-auto">{t(descriptionKey)}</p>
+                  <p className="text-muted-foreground mt-auto">
+                    {t(descriptionKey)}
+                  </p>
                 </div>
               </Card>
             </div>

@@ -31,7 +31,9 @@ function BentoGrid({ items = featuresItems }: BentoGridProps) {
         >
           <div
             className={`absolute inset-0 ${
-              item.hasPersistentHover ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+              item.hasPersistentHover
+                ? 'opacity-100'
+                : 'opacity-0 group-hover:opacity-100'
             } transition-opacity duration-300`}
           >
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,color-mix(in_oklch,var(--color-foreground)_2%,transparent)_1px,transparent_1px)] bg-[length:4px_4px]" />
@@ -84,7 +86,9 @@ function BentoGrid({ items = featuresItems }: BentoGridProps) {
 
           <div
             className={`via-border absolute inset-0 -z-10 rounded-xl bg-gradient-to-br from-transparent to-transparent p-px ${
-              item.hasPersistentHover ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+              item.hasPersistentHover
+                ? 'opacity-100'
+                : 'opacity-0 group-hover:opacity-100'
             } transition-opacity duration-300`}
           />
         </div>

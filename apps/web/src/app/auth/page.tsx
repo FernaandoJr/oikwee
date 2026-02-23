@@ -21,6 +21,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { ImageDithering } from '@paper-design/shaders-react';
 import { useTranslation } from '@repo/i18n';
 import { Eye, EyeOff } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { Fragment, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -39,7 +40,9 @@ export default function SignInPage() {
   const signInSchema = useMemo(
     () =>
       z.object({
-        email: z.email(t('validationEmailInvalid')).min(1, t('validationEmailRequired')),
+        email: z
+          .email(t('validationEmailInvalid'))
+          .min(1, t('validationEmailRequired')),
         password: z.string().min(6, t('validationPasswordMin')),
         rememberMe: z.boolean(),
       }),
@@ -89,7 +92,10 @@ export default function SignInPage() {
                   </p>
 
                   <Form {...form}>
-                    <form className="space-y-5" onSubmit={form.handleSubmit(handleSignIn)}>
+                    <form
+                      className="space-y-5"
+                      onSubmit={form.handleSubmit(handleSignIn)}
+                    >
                       <FormField
                         control={form.control}
                         name="email"
@@ -144,7 +150,9 @@ export default function SignInPage() {
                                     onCheckedChange={field.onChange}
                                   />
                                 </FormControl>
-                                <span className="text-foreground/90">{t('keepMeSignedIn')}</span>
+                                <span className="text-foreground/90">
+                                  {t('keepMeSignedIn')}
+                                </span>
                               </FormLabel>
                             </FormItem>
                           )}
@@ -155,7 +163,7 @@ export default function SignInPage() {
                             e.preventDefault();
                             handleResetPassword();
                           }}
-                          className="text-primary transition-colors hover:underline"
+                          className="text-primary transition-colors select-none hover:underline"
                         >
                           {t('resetPassword')}
                         </Link>
@@ -163,15 +171,15 @@ export default function SignInPage() {
 
                       <Button
                         type="submit"
-                        className="animate-element animate-delay-600 w-full py-4"
+                        className="animate-element animate-delay-600 w-full py-4 select-none"
                       >
                         {t('signIn')}
                       </Button>
                     </form>
                   </Form>
 
-                  <div className="animate-element animate-delay-700 relative flex items-center justify-center">
-                    <span className="border-border w-full border-t"></span>
+                  <div className="animate-element animate-delay-700 relative flex items-center justify-center select-none">
+                    <span className="border-border w-full border-t" />
                     <span className="text-muted-foreground bg-background absolute px-4 text-sm">
                       {t('orContinueWith')}
                     </span>
@@ -180,13 +188,20 @@ export default function SignInPage() {
                   <Button
                     variant="outline"
                     onClick={handleGoogleSignIn}
-                    className="animate-element animate-delay-800 w-full py-4"
+                    className="animate-element animate-delay-800 w-full cursor-pointer py-4 select-none"
                   >
+                    <Image
+                      src="/logo/google.svg"
+                      alt="Google"
+                      width={20}
+                      height={20}
+                      className="size-4"
+                    />
                     {t('continueWithGoogle')}
                   </Button>
 
-                  <p className="animate-element animate-delay-900 text-muted-foreground text-center text-sm">
-                    {t('newToOurPlatform')}{' '}
+                  <p className="animate-element animate-delay-900 text-muted-foreground flex justify-center gap-2 text-center text-sm select-none">
+                    {t('newToOurPlatform')}
                     <Link
                       href="#"
                       onClick={(e) => {

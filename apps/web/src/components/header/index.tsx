@@ -16,7 +16,10 @@ interface HeaderProps {
   forceBlur?: boolean;
 }
 
-export function Header({ disableSticky = false, forceBlur = false }: HeaderProps) {
+export function Header({
+  disableSticky = false,
+  forceBlur = false,
+}: HeaderProps) {
   const [open, setOpen] = useState(false);
   const scrolled = useScroll(10);
   const { t } = useTranslation();
@@ -44,17 +47,26 @@ export function Header({ disableSticky = false, forceBlur = false }: HeaderProps
         },
       )}
     >
-      <nav className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-4">
+      <nav className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-4 select-none">
         <div className="flex items-center gap-5">
           <Link href="/" className="flex items-center gap-2 rounded-md p-2">
-            <Image src="/logo/logo.svg" alt="Logo" width={24} height={24} className="h-4" />
+            <Image
+              src="/logo/logo.svg"
+              alt="Logo"
+              width={24}
+              height={24}
+              className="h-4"
+            />
             <span className="text-lg font-medium">oiKwee</span>
           </Link>
           <div className="hidden items-center gap-1 md:flex">
             {headerLinks.map((link) => (
               <Link
                 key={link.label}
-                className={cn(buttonVariants({ variant: 'ghost' }), 'rounded-md')}
+                className={cn(
+                  buttonVariants({ variant: 'ghost' }),
+                  'rounded-md',
+                )}
                 href={link.href}
               >
                 {link.label}
@@ -81,12 +93,18 @@ export function Header({ disableSticky = false, forceBlur = false }: HeaderProps
           <MenuToggleIcon open={open} className="size-5" duration={300} />
         </Button>
       </nav>
-      <MobileMenu open={open} className="flex flex-col justify-between gap-2 overflow-y-auto">
+      <MobileMenu
+        open={open}
+        className="flex flex-col justify-between gap-2 overflow-y-auto"
+      >
         <div className="grid w-full flex-col gap-y-2">
           {headerLinks.map((link) => (
             <Link
               key={link.label}
-              className={cn(buttonVariants({ variant: 'ghost' }), 'justify-start')}
+              className={cn(
+                buttonVariants({ variant: 'ghost' }),
+                'justify-start',
+              )}
               href={link.href}
               onClick={() => setOpen(false)}
             >
