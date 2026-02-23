@@ -14,11 +14,13 @@ import { useScroll } from '../sidebar/use-scroll';
 interface HeaderProps {
   disableSticky?: boolean;
   forceBlur?: boolean;
+  hideAuthButtons?: boolean;
 }
 
 export function Header({
   disableSticky = false,
   forceBlur = false,
+  hideAuthButtons = false,
 }: HeaderProps) {
   const [open, setOpen] = useState(false);
   const scrolled = useScroll(10);
@@ -75,10 +77,14 @@ export function Header({
           </div>
         </div>
         <div className="hidden items-center gap-2 md:flex">
-          <Link href="/auth">
-            <Button variant="outline">{t('signIn')}</Button>
-          </Link>
-          <Button>{t('getStarted')}</Button>
+          {!hideAuthButtons && (
+            <>
+              <Link href="/auth">
+                <Button variant="outline">{t('signIn')}</Button>
+              </Link>
+              <Button>{t('getStarted')}</Button>
+            </>
+          )}
           <ModeToggle />
         </div>
         <Button
@@ -112,14 +118,16 @@ export function Header({
             </Link>
           ))}
         </div>
-        <div className="flex flex-col gap-2">
-          <Link href="/auth" onClick={() => setOpen(false)}>
-            <Button variant="outline" className="w-full bg-transparent">
-              {t('signIn')}
-            </Button>
-          </Link>
-          <Button className="w-full">{t('getStarted')}</Button>
-        </div>
+        {!hideAuthButtons && (
+          <div className="flex flex-col gap-2">
+            <Link href="/auth" onClick={() => setOpen(false)}>
+              <Button variant="outline" className="w-full bg-transparent">
+                {t('signIn')}
+              </Button>
+            </Link>
+            <Button className="w-full">{t('getStarted')}</Button>
+          </div>
+        )}
       </MobileMenu>
     </header>
   );

@@ -7,7 +7,7 @@ export default function AuthLayout({
 }) {
   return (
     <div className="">
-      <Header disableSticky />
+      <Header disableSticky hideAuthButtons />
       {children}
     </div>
   );
