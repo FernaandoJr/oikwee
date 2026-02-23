@@ -23,9 +23,11 @@ import { useTranslation } from '@repo/i18n';
 import { Eye, EyeOff } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Fragment, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { login, setAccessToken } from '@/lib/api';
 
 interface SignInFormValues {
   email: string;
@@ -35,6 +37,8 @@ interface SignInFormValues {
 
 export default function SignInPage() {
   const { t } = useTranslation();
+  const router = useRouter();
+  const [authError, setAuthError] = useState<string | null>(null);
   const heroImageSrc = '/images/flower_aspect2.png';
 
   const signInSchema = useMemo(
@@ -58,8 +62,15 @@ export default function SignInPage() {
     },
   });
 
-  const handleSignIn = (values: SignInFormValues) => {
-    console.log(values);
+  const handleSignIn = async (values: SignInFormValues) => {
+    setAuthError(null);
+    try {
+      const { accessToken } = await login(values.email, values.password);
+      setAccessToken(accessToken);
+      router.push('/dashboard');
+    } catch (e) {
+      setAuthError(e instanceof Error ? e.message : 'Login failed');
+    }
   };
 
   const handleGoogleSignIn = () => {
@@ -92,6 +103,9 @@ export default function SignInPage() {
                   </p>
 
                   <Form {...form}>
+                    {authError && (
+                      <p className="text-destructive text-sm">{authError}</p>
+                    )}
                     <form
                       className="space-y-5"
                       onSubmit={form.handleSubmit(handleSignIn)}
