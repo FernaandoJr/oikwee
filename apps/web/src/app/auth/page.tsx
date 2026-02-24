@@ -17,6 +17,7 @@ import {
   InputGroupInput,
 } from '@/components/ui/input-group';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { login, setAccessToken } from '@/lib/api';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ImageDithering } from '@paper-design/shaders-react';
 import { useTranslation } from '@repo/i18n';
@@ -27,7 +28,6 @@ import { useRouter } from 'next/navigation';
 import { Fragment, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { login, setAccessToken } from '@/lib/api';
 
 interface SignInFormValues {
   email: string;
