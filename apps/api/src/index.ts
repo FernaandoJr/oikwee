@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { auth } from './auth.js';
+import authRoutes from './routes/auth.js';
 
 type SessionUser = (typeof auth.$Infer)['Session']['user'];
 type SessionSession = (typeof auth.$Infer)['Session']['session'];
@@ -27,15 +28,8 @@ app.use('*', async (c, next) => {
   await next();
 });
 
-app.on(['POST', 'GET'], '/api/auth/*', (c) => auth.handler(c.req.raw));
+app.route('/api/v1', authRoutes);
 
 app.get('/', (c) => c.text('OK'));
-
-app.get('/api/me', (c) => {
-  const user = c.get('user');
-  const session = c.get('session');
-  if (!user) return c.json({ error: 'Unauthorized' }, 401);
-  return c.json({ user, session });
-});
 
 export default app;
