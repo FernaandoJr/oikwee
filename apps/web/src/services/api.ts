@@ -27,7 +27,7 @@ apiClient.interceptors.response.use(
       if (typeof window !== 'undefined') window.location.href = '/auth';
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export { apiClient };
