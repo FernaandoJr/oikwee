@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { auth } from './auth.js';
-import { WEB_APP_ORIGIN } from './constants/envs.js';
+import { env } from './constants/envs.js';
 import authRoutes from './routes/auth.js';
 
 type SessionUser = (typeof auth.$Infer)['Session']['user'];
@@ -14,7 +14,7 @@ const app = new Hono<{
   };
 }>();
 
-app.use('/*', cors({ origin: WEB_APP_ORIGIN, credentials: true }));
+app.use('/*', cors({ origin: env.WEB_APP_ORIGIN, credentials: true }));
 
 app.use('*', async (c, next) => {
   const session = await auth.api.getSession({ headers: c.req.raw.headers });

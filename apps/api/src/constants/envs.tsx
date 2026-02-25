@@ -5,10 +5,26 @@ function requiredEnv(key: string): string {
   return value;
 }
 
-export const API_URL = requiredEnv('API_URL');
-export const BETTER_AUTH_URL = requiredEnv('BETTER_AUTH_URL');
-export const MONGODB_URI = requiredEnv('MONGODB_URI');
-export const BETTER_AUTH_SECRET = requiredEnv('BETTER_AUTH_SECRET');
-export const WEB_APP_ORIGIN = requiredEnv('WEB_APP_ORIGIN');
-export const GOOGLE_CLIENT_ID = requiredEnv('GOOGLE_CLIENT_ID');
-export const GOOGLE_CLIENT_SECRET = requiredEnv('GOOGLE_CLIENT_SECRET');
+const cache: Record<string, string> = {};
+function get(key: string): string {
+  if (!(key in cache)) cache[key] = requiredEnv(key);
+  return cache[key];
+}
+
+export const env = {
+  get BETTER_AUTH_URL() {
+    return get('BETTER_AUTH_URL');
+  },
+  get MONGODB_URI() {
+    return get('MONGODB_URI');
+  },
+  get WEB_APP_ORIGIN() {
+    return get('WEB_APP_ORIGIN');
+  },
+  get GOOGLE_CLIENT_ID() {
+    return get('GOOGLE_CLIENT_ID');
+  },
+  get GOOGLE_CLIENT_SECRET() {
+    return get('GOOGLE_CLIENT_SECRET');
+  },
+};
