@@ -1,25 +1,22 @@
 import axios from 'axios';
-import { clearAccessToken, getApiV1Url, getToken } from '@/auth';
+import { getApiV1Url } from './config';
+import { clearAccessToken, getToken } from './storage';
 
-export function getBaseURL(): string {
-  return getApiV1Url();
-}
-
-const apiClient = axios.create({
-  baseURL: getBaseURL(),
+export const authApiClient = axios.create({
+  baseURL: getApiV1Url(),
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-apiClient.interceptors.request.use((config) => {
+authApiClient.interceptors.request.use((config) => {
   if (typeof window === 'undefined') return config;
   const token = getToken();
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
-apiClient.interceptors.response.use(
+authApiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
@@ -29,5 +26,3 @@ apiClient.interceptors.response.use(
     return Promise.reject(error);
   },
 );
-
-export { apiClient };

@@ -17,9 +17,7 @@ import {
   InputGroupInput,
 } from '@/components/ui/input-group';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { heroImageSrc } from '@/constants/auth';
-import { useSignIn } from '@/hooks/use-auth';
-import { authClient } from '@/lib/auth-client';
+import { authClient, getOAuthRedirectUrl, heroImageSrc, useSignIn } from '@/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ImageDithering } from '@paper-design/shaders-react';
 import { useTranslation } from '@repo/i18n';
@@ -83,7 +81,7 @@ export default function SignInPage() {
     setGoogleLoading(true);
     const { data, error } = await authClient.signIn.social({
       provider: 'google',
-      callbackURL: `${process.env.NEXT_PUBLIC_WEB_URL}/dashboard`,
+      callbackURL: getOAuthRedirectUrl(),
     });
     setGoogleLoading(false);
     if (error) {

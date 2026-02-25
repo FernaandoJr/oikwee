@@ -1,8 +1,5 @@
 'use client';
 
-import { getToken } from '@/lib/auth-storage';
-import { authService } from '@/services/auth';
-import type { AuthSession, AuthUser, MeResponse } from '@/services/auth';
 import {
   useMutation,
   useQuery,
@@ -10,6 +7,9 @@ import {
 } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { getToken } from './storage';
+import { authService } from './service';
+import type { AuthSession, AuthUser, MeResponse } from './types';
 
 export function useUser(): {
   user: AuthUser | null;

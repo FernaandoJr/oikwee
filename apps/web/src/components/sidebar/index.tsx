@@ -22,7 +22,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { useUser } from '@/hooks/use-auth';
+import { useUser } from '@/auth';
 import { useTranslation } from '@repo/i18n';
 import Image from 'next/image';
 import Link from 'next/link';

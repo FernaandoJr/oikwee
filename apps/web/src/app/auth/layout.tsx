@@ -1,7 +1,7 @@
 'use client';
 
 import { Header } from '@/components/header';
-import { useUser } from '@/hooks/use-auth';
+import { useUser } from '@/auth';
 
 export default function AuthLayout({
   children,

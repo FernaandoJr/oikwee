@@ -26,7 +26,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import { avatarColorClasses } from '@/constants/avatar';
-import { useSignOut } from '@/hooks/use-auth';
+import { useSignOut } from '@/auth';
 import { Facehash } from 'facehash';
 
 export function NavUser({

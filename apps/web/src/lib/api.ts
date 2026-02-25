@@ -1,13 +1,4 @@
-import {
-  clearAccessToken as clearToken,
-  getToken,
-  setAccessToken as setToken,
-} from '@/lib/auth-storage';
 import { apiClient } from '@/services';
-
-export const setAccessToken = setToken;
-export const clearAccessToken = clearToken;
-export { getToken };
 
 export async function apiFetch(
   path: string,

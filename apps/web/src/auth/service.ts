@@ -1,29 +1,7 @@
-import { clearAccessToken, setAccessToken } from '@/lib/auth-storage';
 import type { AxiosInstance } from 'axios';
-import { apiClient } from './api';
-
-export interface AuthUser {
-  id: string;
-  name: string;
-  email: string;
-  image?: string | null;
-}
-
-export interface AuthSession {
-  id?: string;
-  userId?: string;
-  token?: string;
-  expiresAt?: Date;
-}
-
-export interface MeResponse {
-  user: AuthUser;
-  session: AuthSession | null;
-}
-
-export interface SignInResult {
-  accessToken: string;
-}
+import { authApiClient } from './api-client';
+import { clearAccessToken, setAccessToken } from './storage';
+import type { MeResponse, SignInResult } from './types';
 
 export class AuthService {
   constructor(private client: AxiosInstance) {}
@@ -34,7 +12,7 @@ export class AuthService {
     rememberMe = true,
   ): Promise<SignInResult> {
     try {
-      const res = await this.client.post('/api/v1/auth/sign-in/email', {
+      const res = await this.client.post('auth/sign-in/email', {
         email,
         password,
         rememberMe,
@@ -74,16 +52,14 @@ export class AuthService {
   }
 
   async getSession(): Promise<MeResponse> {
-    const res = await this.client.get<MeResponse>('/me');
+    const res = await this.client.get<MeResponse>('me');
     return res.data;
   }
 
   async signOut(): Promise<void> {
     try {
-      await this.client.post('/auth/sign-out', {
-        headers: {
-          'content-type': 'application/json',
-        },
+      await this.client.post('auth/sign-out', {
+        headers: { 'Content-Type': 'application/json' },
       });
     } finally {
       clearAccessToken();
@@ -91,4 +67,4 @@ export class AuthService {
   }
 }
 
-export const authService = new AuthService(apiClient);
+export const authService = new AuthService(authApiClient);

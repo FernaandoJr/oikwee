@@ -2,7 +2,7 @@
 import { MenuToggleIcon } from '@/components/menu-toggle-icon';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { headerLinks } from '@/constants/header-links';
-import { useUser } from '@/hooks/use-auth';
+import { useUser } from '@/auth';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@repo/i18n';
 import Image from 'next/image';
