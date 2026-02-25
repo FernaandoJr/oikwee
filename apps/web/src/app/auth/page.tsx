@@ -21,6 +21,7 @@ import { login, setAccessToken } from '@/lib/api';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ImageDithering } from '@paper-design/shaders-react';
 import { useTranslation } from '@repo/i18n';
+import { useMutation } from '@tanstack/react-query';
 import { Eye, EyeOff } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -38,8 +39,26 @@ interface SignInFormValues {
 export default function SignInPage() {
   const { t } = useTranslation();
   const router = useRouter();
-  const [authError, setAuthError] = useState<string | null>(null);
   const heroImageSrc = '/images/flower_aspect2.png';
+
+  const signInMutation = useMutation({
+    mutationFn: ({
+      email,
+      password,
+      rememberMe,
+    }: {
+      email: string;
+      password: string;
+      rememberMe: boolean;
+    }) => login(email, password, rememberMe),
+    onSuccess: (data) => {
+      setAccessToken(data.accessToken);
+      router.replace('/dashboard');
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
 
   const signInSchema = useMemo(
     () =>
@@ -62,16 +81,17 @@ export default function SignInPage() {
     },
   });
 
-  const handleSignIn = async (values: SignInFormValues) => {
-    setAuthError(null);
-    try {
-      const { accessToken } = await login(values.email, values.password);
-      setAccessToken(accessToken);
-      router.push('/dashboard');
-    } catch (e) {
-      setAuthError(e instanceof Error ? e.message : 'Login failed');
-    }
+  const handleSignIn = (values: SignInFormValues) => {
+    signInMutation.reset();
+    signInMutation.mutate({
+      email: values.email,
+      password: values.password,
+      rememberMe: values.rememberMe,
+    });
   };
+
+  const authError = signInMutation.error?.message ?? null;
+  const isSubmitting = signInMutation.isPending;
 
   const handleGoogleSignIn = () => {
     // TODO: Implement Google sign in
@@ -186,8 +206,11 @@ export default function SignInPage() {
                       <Button
                         type="submit"
                         className="animate-element animate-delay-600 w-full py-4 select-none"
+                        disabled={isSubmitting}
                       >
-                        {t('signIn')}
+                        {isSubmitting
+                          ? (t('signingIn') ?? 'Signing in...')
+                          : t('signIn')}
                       </Button>
                     </form>
                   </Form>

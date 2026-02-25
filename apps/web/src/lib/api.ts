@@ -1,31 +1,78 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8787';
+import {
+  clearAccessToken as clearToken,
+  getToken,
+  setAccessToken as setToken,
+} from '@/lib/auth-storage';
+import { apiClient } from '@/services';
 
-const getToken = () => (typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null);
+export const setAccessToken = setToken;
+export const clearAccessToken = clearToken;
+export { getToken };
 
-export function setAccessToken(token: string) {
-  if (typeof window !== 'undefined') localStorage.setItem('accessToken', token);
-}
-
-export function clearAccessToken() {
-  if (typeof window !== 'undefined') localStorage.removeItem('accessToken');
-}
-
-export async function apiFetch(path: string, init?: RequestInit) {
-  const token = getToken();
-  const headers = new Headers(init?.headers);
-  if (token) headers.set('Authorization', `Bearer ${token}`);
-  return fetch(`${API_URL}${path}`, { ...init, headers });
-}
-
-export async function login(email: string, password: string): Promise<{ accessToken: string }> {
-  const res = await fetch(`${API_URL}/auth/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password }),
+export async function apiFetch(
+  path: string,
+  init?: RequestInit,
+): Promise<Response> {
+  const method = (init?.method ?? 'GET').toLowerCase();
+  const headers = init?.headers as Record<string, string> | undefined;
+  const body = init?.body;
+  const res = await apiClient.request({
+    url: path,
+    method: method as 'get' | 'post' | 'put' | 'patch' | 'delete' | 'head',
+    headers: headers ? { ...headers } : undefined,
+    data: body
+      ? typeof body === 'string'
+        ? JSON.parse(body)
+        : body
+      : undefined,
   });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ error: res.statusText }));
-    throw new Error((err as { error?: string }).error || 'Login failed');
+  return new Response(JSON.stringify(res.data), {
+    status: res.status,
+    statusText: res.statusText,
+    headers: new Headers(res.headers as Record<string, string>),
+  });
+}
+
+export async function login(
+  email: string,
+  password: string,
+  rememberMe = true,
+): Promise<{ accessToken: string }> {
+  try {
+    const res = await apiClient.post('/api/v1/auth/sign-in/email', {
+      email,
+      password,
+      rememberMe,
+    });
+    const tokenFromHeader = res.headers?.['set-auth-token'];
+    const data = res.data as {
+      token?: string;
+      access_token?: string;
+      accessToken?: string;
+      session?: { token?: string };
+    };
+    const token =
+      typeof tokenFromHeader === 'string'
+        ? tokenFromHeader
+        : (data?.token ??
+          data?.access_token ??
+          data?.accessToken ??
+          data?.session?.token);
+    if (!token) throw new Error('Login failed');
+    return { accessToken: token };
+  } catch (err: unknown) {
+    const message =
+      err && typeof err === 'object' && 'response' in err
+        ? ((
+            err as {
+              response?: { data?: { error?: string; message?: string } };
+            }
+          ).response?.data?.error ??
+          (err as { response?: { data?: { message?: string } } }).response?.data
+            ?.message)
+        : null;
+    throw new Error(
+      message ?? (err instanceof Error ? err.message : 'Login failed'),
+    );
   }
-  return res.json();
 }

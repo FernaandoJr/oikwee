@@ -1,4 +1,5 @@
 import { ThemeProvider } from '@/components/ui/theme-provider';
+import { QueryProvider } from '@/components/providers/query-provider';
 import type { Metadata } from 'next';
 import { Fira_Code, Outfit } from 'next/font/google';
 import Script from 'next/script';
@@ -40,7 +41,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <QueryProvider>{children}</QueryProvider>
         </ThemeProvider>
       </body>
     </html>
