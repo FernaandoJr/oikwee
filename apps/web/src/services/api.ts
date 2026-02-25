@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { toast } from 'sonner';
 import { clearAccessToken, getApiV1Url, getToken } from '@/auth';
 
 export function getBaseURL(): string {
@@ -24,7 +25,10 @@ apiClient.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       clearAccessToken();
-      if (typeof window !== 'undefined') window.location.href = '/auth';
+      if (typeof window !== 'undefined') {
+        toast.error('Sessão expirada');
+        window.location.href = '/auth';
+      }
     }
     return Promise.reject(error);
   },

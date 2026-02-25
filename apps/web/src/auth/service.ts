@@ -35,19 +35,8 @@ export class AuthService {
       setAccessToken(token);
       return { accessToken: token };
     } catch (err: unknown) {
-      const message =
-        err && typeof err === 'object' && 'response' in err
-          ? ((
-              err as {
-                response?: { data?: { error?: string; message?: string } };
-              }
-            ).response?.data?.error ??
-            (err as { response?: { data?: { message?: string } } }).response
-              ?.data?.message)
-          : null;
-      throw new Error(
-        message ?? (err instanceof Error ? err.message : 'Login failed'),
-      );
+      console.error(err);
+      throw new Error('Login failed');
     }
   }
 

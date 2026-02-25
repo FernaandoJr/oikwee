@@ -1,4 +1,5 @@
 import { ThemeProvider } from '@/components/ui/theme-provider';
+import { Toaster } from '@/components/ui/sonner';
 import { QueryProvider } from '@/components/providers/query-provider';
 import type { Metadata } from 'next';
 import { Fira_Code, Outfit } from 'next/font/google';
@@ -42,6 +43,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <QueryProvider>{children}</QueryProvider>
+          <Toaster position="bottom-right" />
         </ThemeProvider>
       </body>
     </html>

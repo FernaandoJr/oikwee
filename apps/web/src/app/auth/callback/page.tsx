@@ -22,12 +22,12 @@ export default function AuthCallbackPage() {
         : null;
 
     if (!token) {
-      setStatus('error');
+      queueMicrotask(() => setStatus('error'));
       return;
     }
 
     setAccessToken(token);
-    setStatus('done');
+    queueMicrotask(() => setStatus('done'));
     router.replace('/dashboard');
   }, [router]);
 
@@ -37,7 +37,7 @@ export default function AuthCallbackPage() {
   }
 
   return (
-    <div className="min-h- flex flex-col items-center justify-center gap-4">
+    <div className="flex min-h-screen flex-col items-center justify-center gap-4">
       <Loader size="xs" />
       <p className="text-muted-foreground">{t('signingIn')}</p>
     </div>

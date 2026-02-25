@@ -30,8 +30,10 @@ import { useTranslation } from '@repo/i18n';
 import { Eye, EyeOff } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Fragment, useMemo, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 function SocialLogo({
@@ -69,22 +71,14 @@ interface SignInFormValues {
 }
 
 export default function SignInPage() {
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const [githubLoading, setGithubLoading] = useState(false);
+  const [discordLoading, setDiscordLoading] = useState(false);
+
   const { t } = useTranslation();
-  const {
-    mutate: signIn,
-    isPending: isSubmitting,
-    error: signInError,
-  } = useSignIn();
-
-  const handleSignIn = (values: SignInFormValues) => {
-    signIn({
-      email: values.email,
-      password: values.password,
-      rememberMe: values.rememberMe,
-    });
-  };
-
-  const authError = signInError?.message ?? null;
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { mutate: signIn, isPending: isSubmitting } = useSignIn();
 
   const signInSchema = useMemo(
     () =>
@@ -107,15 +101,15 @@ export default function SignInPage() {
     },
   });
 
-  const [googleLoading, setGoogleLoading] = useState(false);
-  const [googleError, setGoogleError] = useState<string | null>(null);
-  const [githubLoading, setGithubLoading] = useState(false);
-  const [githubError, setGithubError] = useState<string | null>(null);
-  const [discordLoading, setDiscordLoading] = useState(false);
-  const [discordError, setDiscordError] = useState<string | null>(null);
+  const handleSignIn = (values: SignInFormValues) => {
+    signIn({
+      email: values.email,
+      password: values.password,
+      rememberMe: values.rememberMe,
+    });
+  };
 
   const handleGoogleSignIn = async () => {
-    setGoogleError(null);
     setGoogleLoading(true);
     const { data, error } = await authClient.signIn.social({
       provider: 'google',
@@ -123,14 +117,13 @@ export default function SignInPage() {
     });
     setGoogleLoading(false);
     if (error) {
-      setGoogleError(error.message ?? 'Google sign-in failed');
+      toast.error(error.message ?? 'Google sign-in failed');
       return;
     }
     if (data?.url) window.location.href = data.url;
   };
 
   const handleGitHubSignIn = async () => {
-    setGithubError(null);
     setGithubLoading(true);
     const { data, error } = await authClient.signIn.social({
       provider: 'github',
@@ -138,14 +131,13 @@ export default function SignInPage() {
     });
     setGithubLoading(false);
     if (error) {
-      setGithubError(error.message ?? 'GitHub sign-in failed');
+      toast.error(error.message ?? 'GitHub sign-in failed');
       return;
     }
     if (data?.url) window.location.href = data.url;
   };
 
   const handleDiscordSignIn = async () => {
-    setDiscordError(null);
     setDiscordLoading(true);
     const { data, error } = await authClient.signIn.social({
       provider: 'discord',
@@ -153,11 +145,18 @@ export default function SignInPage() {
     });
     setDiscordLoading(false);
     if (error) {
-      setDiscordError(error.message ?? 'Discord sign-in failed');
+      toast.error(error.message ?? 'Discord sign-in failed');
       return;
     }
     if (data?.url) window.location.href = data.url;
   };
+
+  useEffect(() => {
+    if (searchParams.get('error') === 'callback') {
+      toast.error('Falha no retorno do login. Tente novamente.');
+      router.replace('/auth');
+    }
+  }, [searchParams, router]);
 
   const handleResetPassword = () => {
     // TODO: Implement reset password
@@ -186,9 +185,6 @@ export default function SignInPage() {
                   </p>
 
                   <Form {...form}>
-                    {authError && (
-                      <p className="text-destructive text-sm">{authError}</p>
-                    )}
                     <form
                       className="space-y-5"
                       onSubmit={form.handleSubmit(handleSignIn)}
@@ -285,11 +281,6 @@ export default function SignInPage() {
                     </span>
                   </div>
 
-                  {(googleError ?? githubError ?? discordError) && (
-                    <p className="text-destructive text-sm">
-                      {googleError ?? githubError ?? discordError}
-                    </p>
-                  )}
                   <div className="animate-element animate-delay-800 flex w-full flex-col gap-3">
                     <Button
                       variant="outline"

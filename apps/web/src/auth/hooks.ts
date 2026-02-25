@@ -1,14 +1,11 @@
 'use client';
 
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { getToken } from './storage';
+import { toast } from 'sonner';
 import { authService } from './service';
+import { getToken } from './storage';
 import type { AuthSession, AuthUser, MeResponse } from './types';
 
 export function useUser(): {
@@ -23,12 +20,7 @@ export function useUser(): {
     setHasToken(!!getToken());
   }, []);
 
-  const {
-    data,
-    isLoading,
-    error,
-    refetch,
-  } = useQuery<MeResponse>({
+  const { data, isLoading, error, refetch } = useQuery<MeResponse>({
     queryKey: ['user'],
     queryFn: () => authService.getSession(),
     enabled: hasToken,
@@ -69,6 +61,9 @@ export function useSignIn(): {
       queryClient.invalidateQueries({ queryKey: ['user'] });
       router.replace('/dashboard');
     },
+    onError: (err) => {
+      toast.error(err.message ?? 'Login failed');
+    },
   });
 
   return {
@@ -90,6 +85,9 @@ export function useSignOut(): {
     onSuccess: () => {
       queryClient.removeQueries({ queryKey: ['user'] });
       router.replace('/auth');
+    },
+    onError: () => {
+      toast.error('Erro ao sair. Tente novamente.');
     },
   });
 
