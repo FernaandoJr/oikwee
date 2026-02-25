@@ -19,6 +19,7 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { heroImageSrc } from '@/constants/auth';
 import { useSignIn } from '@/hooks/use-auth';
+import { authClient } from '@/lib/auth-client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ImageDithering } from '@paper-design/shaders-react';
 import { useTranslation } from '@repo/i18n';
@@ -74,8 +75,22 @@ export default function SignInPage() {
     },
   });
 
-  const handleGoogleSignIn = () => {
-    // TODO: Implement Google sign in
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const [googleError, setGoogleError] = useState<string | null>(null);
+
+  const handleGoogleSignIn = async () => {
+    setGoogleError(null);
+    setGoogleLoading(true);
+    const { data, error } = await authClient.signIn.social({
+      provider: 'google',
+      callbackURL: `${process.env.NEXT_PUBLIC_WEB_URL}/dashboard`,
+    });
+    setGoogleLoading(false);
+    if (error) {
+      setGoogleError(error.message ?? 'Google sign-in failed');
+      return;
+    }
+    if (data?.url) window.location.href = data.url;
   };
 
   const handleResetPassword = () => {
@@ -203,9 +218,13 @@ export default function SignInPage() {
                     </span>
                   </div>
 
+                  {googleError && (
+                    <p className="text-destructive text-sm">{googleError}</p>
+                  )}
                   <Button
                     variant="outline"
                     onClick={handleGoogleSignIn}
+                    disabled={googleLoading}
                     className="animate-element animate-delay-800 w-full cursor-pointer py-4 select-none"
                   >
                     <Image
@@ -215,7 +234,9 @@ export default function SignInPage() {
                       height={20}
                       className="size-4"
                     />
-                    {t('continueWithGoogle')}
+                    {googleLoading
+                      ? (t('signingIn') ?? 'Signing in...')
+                      : t('continueWithGoogle')}
                   </Button>
 
                   <p className="animate-element animate-delay-900 text-muted-foreground flex justify-center gap-2 text-center text-sm select-none">

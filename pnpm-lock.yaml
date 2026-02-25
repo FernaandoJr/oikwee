@@ -112,6 +112,9 @@ importers:
       axios:
         specifier: ^1.13.5
         version: 1.13.5
+      better-auth:
+        specifier: ^1.4.19
+        version: 1.4.19(mongodb@7.1.0)(next@16.1.6(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(pg@8.18.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1

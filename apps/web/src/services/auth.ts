@@ -74,13 +74,13 @@ export class AuthService {
   }
 
   async getSession(): Promise<MeResponse> {
-    const res = await this.client.get<MeResponse>('/api/v1/me');
+    const res = await this.client.get<MeResponse>('/me');
     return res.data;
   }
 
   async signOut(): Promise<void> {
     try {
-      await this.client.post('/api/v1/auth/sign-out', {
+      await this.client.post('/auth/sign-out', {
         headers: {
           'content-type': 'application/json',
         },

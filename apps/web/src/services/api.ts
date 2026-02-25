@@ -1,8 +1,8 @@
-import axios from 'axios';
 import { clearAccessToken } from '@/lib/auth-storage';
+import axios from 'axios';
 
 export function getBaseURL(): string {
-  return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8787';
+  return `${process.env.NEXT_PUBLIC_API_URL}/api/v1`;
 }
 
 const apiClient = axios.create({
