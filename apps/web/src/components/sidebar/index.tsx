@@ -22,6 +22,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { useUser } from '@/hooks/use-auth';
 import { useTranslation } from '@repo/i18n';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -135,6 +136,7 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { t } = useTranslation();
+  const { user, isLoading } = useUser();
 
   return (
     <Sidebar variant="inset" {...props}>
@@ -167,7 +169,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        {!isLoading && user && (
+          <NavUser
+            user={{
+              name: user.name,
+              email: user.email,
+              avatar: user.image ?? '',
+            }}
+          />
+        )}
       </SidebarFooter>
     </Sidebar>
   );

@@ -2,6 +2,7 @@
 import { MenuToggleIcon } from '@/components/menu-toggle-icon';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { headerLinks } from '@/constants/header-links';
+import { useUser } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@repo/i18n';
 import Image from 'next/image';
@@ -25,6 +26,8 @@ export function Header({
   const [open, setOpen] = useState(false);
   const scrolled = useScroll(10);
   const { t } = useTranslation();
+  const { user } = useUser();
+  const isLoggedIn = !!user;
 
   useEffect(() => {
     if (open) {
@@ -77,13 +80,22 @@ export function Header({
           </div>
         </div>
         <div className="hidden items-center gap-2 md:flex">
-          {!hideAuthButtons && (
-            <>
-              <Link href="/auth">
-                <Button variant="outline">{t('signIn')}</Button>
+          {!hideAuthButtons ||
+            (!isLoggedIn && (
+              <>
+                <Link href="/auth">
+                  <Button variant="outline">{t('signIn')}</Button>
+                </Link>
+              </>
+            ))}
+          {isLoggedIn && (
+            <div className="flex flex-col gap-2">
+              <Link href="/dashboard" onClick={() => setOpen(false)}>
+                <Button variant="link" className="w-full cursor-pointer">
+                  {t('dashboard')}
+                </Button>
               </Link>
-              <Button>{t('getStarted')}</Button>
-            </>
+            </div>
           )}
           <ModeToggle />
         </div>
@@ -125,7 +137,6 @@ export function Header({
                 {t('signIn')}
               </Button>
             </Link>
-            <Button className="w-full">{t('getStarted')}</Button>
           </div>
         )}
       </MobileMenu>
