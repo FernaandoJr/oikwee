@@ -82,11 +82,9 @@ export function Header({
         <div className="hidden items-center gap-2 md:flex">
           {!hideAuthButtons ||
             (isLoggedIn && (
-              <>
-                <Link href="/auth">
-                  <Button variant="outline">{t('signIn')}</Button>
-                </Link>
-              </>
+              <Link href="/auth">
+                <Button variant="outline">{t('signIn')}</Button>
+              </Link>
             ))}
           {isLoggedIn && (
             <div className="flex flex-col gap-2">
