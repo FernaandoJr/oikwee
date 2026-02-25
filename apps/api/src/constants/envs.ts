@@ -27,4 +27,10 @@ export const env = {
   get GOOGLE_CLIENT_SECRET() {
     return get('GOOGLE_CLIENT_SECRET');
   },
+  get GITHUB_CLIENT_ID() {
+    return get('GITHUB_CLIENT_ID');
+  },
+  get GITHUB_CLIENT_SECRET() {
+    return get('GITHUB_CLIENT_SECRET');
+  },
 };

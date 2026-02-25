@@ -1,4 +1,10 @@
 'use client';
+import {
+  authClient,
+  getOAuthRedirectUrl,
+  heroImageSrc,
+  useSignIn,
+} from '@/auth';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -17,11 +23,10 @@ import {
   InputGroupInput,
 } from '@/components/ui/input-group';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { authClient, getOAuthRedirectUrl, heroImageSrc, useSignIn } from '@/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ImageDithering } from '@paper-design/shaders-react';
 import { useTranslation } from '@repo/i18n';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Github } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Fragment, useMemo, useState } from 'react';
@@ -75,6 +80,8 @@ export default function SignInPage() {
 
   const [googleLoading, setGoogleLoading] = useState(false);
   const [googleError, setGoogleError] = useState<string | null>(null);
+  const [githubLoading, setGithubLoading] = useState(false);
+  const [githubError, setGithubError] = useState<string | null>(null);
 
   const handleGoogleSignIn = async () => {
     setGoogleError(null);
@@ -86,6 +93,21 @@ export default function SignInPage() {
     setGoogleLoading(false);
     if (error) {
       setGoogleError(error.message ?? 'Google sign-in failed');
+      return;
+    }
+    if (data?.url) window.location.href = data.url;
+  };
+
+  const handleGitHubSignIn = async () => {
+    setGithubError(null);
+    setGithubLoading(true);
+    const { data, error } = await authClient.signIn.social({
+      provider: 'github',
+      callbackURL: getOAuthRedirectUrl(),
+    });
+    setGithubLoading(false);
+    if (error) {
+      setGithubError(error.message ?? 'GitHub sign-in failed');
       return;
     }
     if (data?.url) window.location.href = data.url;
@@ -216,26 +238,41 @@ export default function SignInPage() {
                     </span>
                   </div>
 
-                  {googleError && (
-                    <p className="text-destructive text-sm">{googleError}</p>
+                  {(googleError ?? githubError) && (
+                    <p className="text-destructive text-sm">
+                      {googleError ?? githubError}
+                    </p>
                   )}
-                  <Button
-                    variant="outline"
-                    onClick={handleGoogleSignIn}
-                    disabled={googleLoading}
-                    className="animate-element animate-delay-800 w-full cursor-pointer py-4 select-none"
-                  >
-                    <Image
-                      src="/logo/google.svg"
-                      alt="Google"
-                      width={20}
-                      height={20}
-                      className="size-4"
-                    />
-                    {googleLoading
-                      ? (t('signingIn') ?? 'Signing in...')
-                      : t('continueWithGoogle')}
-                  </Button>
+                  <div className="animate-element animate-delay-800 flex w-full gap-3">
+                    <Button
+                      variant="outline"
+                      onClick={handleGoogleSignIn}
+                      disabled={googleLoading || githubLoading}
+                      className="flex-1 cursor-pointer py-4 select-none"
+                    >
+                      <Image
+                        src="/logo/google.svg"
+                        alt="Google"
+                        width={20}
+                        height={20}
+                        className="size-4"
+                      />
+                      {googleLoading
+                        ? (t('signingIn') ?? 'Signing in...')
+                        : t('continueWithGoogle')}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={handleGitHubSignIn}
+                      disabled={googleLoading || githubLoading}
+                      className="flex-1 cursor-pointer py-4 select-none"
+                    >
+                      <Github className="size-5" />
+                      {githubLoading
+                        ? (t('signingIn') ?? 'Signing in...')
+                        : t('continueWithGitHub')}
+                    </Button>
+                  </div>
 
                   <p className="animate-element animate-delay-900 text-muted-foreground flex justify-center gap-2 text-center text-sm select-none">
                     {t('newToOurPlatform')}
