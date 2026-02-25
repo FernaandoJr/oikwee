@@ -37,7 +37,7 @@ export default function AuthCallbackPage() {
   }
 
   return (
-    <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
+    <div className="min-h- flex flex-col items-center justify-center gap-4">
       <Loader size="xs" />
       <p className="text-muted-foreground">{t('signingIn')}</p>
     </div>

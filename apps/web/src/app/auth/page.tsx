@@ -5,6 +5,7 @@ import {
   heroImageSrc,
   useSignIn,
 } from '@/auth';
+import { Header } from '@/components/header';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -168,6 +169,7 @@ export default function SignInPage() {
 
   return (
     <Fragment>
+      <Header disableSticky hideAuthButtons />
       <div className="font-geist flex h-[calc(100dvh-4rem)] w-full flex-col overflow-hidden md:flex-row">
         <ScrollArea className="min-h-0 flex-1">
           <div className="flex min-h-full w-full flex-col items-center justify-center md:flex-row">
