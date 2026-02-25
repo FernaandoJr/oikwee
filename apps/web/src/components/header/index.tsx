@@ -1,8 +1,8 @@
 'use client';
+import { useUser } from '@/auth';
 import { MenuToggleIcon } from '@/components/menu-toggle-icon';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { headerLinks } from '@/constants/header-links';
-import { useUser } from '@/auth';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@repo/i18n';
 import Image from 'next/image';
@@ -81,7 +81,7 @@ export function Header({
         </div>
         <div className="hidden items-center gap-2 md:flex">
           {!hideAuthButtons ||
-            (!isLoggedIn && (
+            (isLoggedIn && (
               <>
                 <Link href="/auth">
                   <Button variant="outline">{t('signIn')}</Button>
