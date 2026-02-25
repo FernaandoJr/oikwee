@@ -33,4 +33,10 @@ export const env = {
   get GITHUB_CLIENT_SECRET() {
     return get('GITHUB_CLIENT_SECRET');
   },
+  get DISCORD_CLIENT_ID() {
+    return get('DISCORD_CLIENT_ID');
+  },
+  get DISCORD_CLIENT_SECRET() {
+    return get('DISCORD_CLIENT_SECRET');
+  },
 };
