@@ -1,25 +1,37 @@
 'use client';
 
-import { Header } from '@/components/header';
 import { useUser } from '@/auth';
+import Loader from '@/components/loader';
+import { useTranslation } from '@repo/i18n';
 
 export default function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { t } = useTranslation();
   const { user, isLoading } = useUser();
+
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <>
+        <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
+          <Loader size="xs" />
+          <p className="text-muted-foreground">{t('loading')}</p>
+        </div>
+      </>
+    );
   }
 
   if (user) {
-    return <div>Redirecting to dashboard...</div>;
+    return (
+      <>
+        <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
+          <Loader size="xs" />
+          <p className="text-muted-foreground">{t('loading')}</p>
+        </div>
+      </>
+    );
   }
-  return (
-    <div className="">
-      <Header disableSticky hideAuthButtons />
-      {children}
-    </div>
-  );
+  return children;
 }

@@ -1,10 +1,13 @@
 'use client';
 
 import { setAccessToken } from '@/auth';
+import Loader from '@/components/loader';
+import { useTranslation } from '@repo/i18n';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export default function AuthCallbackPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [status, setStatus] = useState<'loading' | 'done' | 'error'>('loading');
 
@@ -34,8 +37,9 @@ export default function AuthCallbackPage() {
   }
 
   return (
-    <div className="flex min-h-[40vh] items-center justify-center">
-      <p className="text-muted-foreground">Signing you in...</p>
+    <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
+      <Loader size="xs" />
+      <p className="text-muted-foreground">{t('signingIn')}</p>
     </div>
   );
 }

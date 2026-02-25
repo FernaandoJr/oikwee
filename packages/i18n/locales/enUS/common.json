@@ -14,6 +14,7 @@
   "keepMeSignedIn": "Keep me signed in",
   "resetPassword": "Reset password",
   "signIn": "Sign In",
+  "signingIn": "Signing you in...",
   "orContinueWith": "Or continue with",
   "continueWithGoogle": "Continue with Google",
   "continueWithGitHub": "Continue with GitHub",

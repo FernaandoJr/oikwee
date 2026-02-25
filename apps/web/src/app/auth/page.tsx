@@ -391,7 +391,7 @@ const PasswordInput = ({
       <InputGroupInput
         type={showPassword ? 'text' : 'password'}
         placeholder={placeholder}
-        className="p-4 text-sm"
+        className="text-sm"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onBlur={onBlur}
