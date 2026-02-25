@@ -25,6 +25,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
+import { avatarColorClasses } from '@/constants/avatar';
 import { useSignOut } from '@/hooks/use-auth';
 import { Facehash } from 'facehash';
 
@@ -49,13 +50,13 @@ export function NavUser({
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Avatar className="h-8 w-8 rounded-lg">
+              <Avatar className="flex h-8 w-8 items-center justify-center rounded-lg">
                 <Facehash
                   enableBlink
                   name={user.name}
                   intensity3d="medium"
                   showInitial={false}
-                  colorClasses={['bg-pink-500', 'bg-blue-500']}
+                  colorClasses={avatarColorClasses}
                 />
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
