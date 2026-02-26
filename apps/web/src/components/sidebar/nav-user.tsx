@@ -5,6 +5,7 @@ import {
   Bell,
   Check,
   ChevronsUpDown,
+  Home,
   LogOut,
   Monitor,
   Moon,
@@ -31,6 +32,7 @@ import {
 } from '@/components/ui/sidebar';
 import { avatarColorClasses } from '@/constants/avatar';
 import { Facehash } from 'facehash';
+import { useRouter } from 'next/navigation';
 
 export function NavUser({
   user,
@@ -44,6 +46,7 @@ export function NavUser({
   const { isMobile } = useSidebar();
   const { theme, setTheme } = useTheme();
   const { mutate: signOut, isPending: isSigningOut } = useSignOut();
+  const router = useRouter();
 
   return (
     <SidebarMenu>
@@ -101,6 +104,10 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
+              <DropdownMenuItem onClick={() => router.push('/')}>
+                <Home />
+                Home Page
+              </DropdownMenuItem>
               <DropdownMenuGroup>
                 <DropdownMenuItem>
                   <BadgeCheck />
@@ -128,7 +135,7 @@ export function NavUser({
                 {theme === 'system' && <Check className="ml-auto" />}
               </DropdownMenuItem>
             </DropdownMenuGroup>
-            <DropdownMenuSeparator />
+
             <DropdownMenuItem onClick={() => signOut()} disabled={isSigningOut}>
               <LogOut />
               Log out

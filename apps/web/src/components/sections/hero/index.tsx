@@ -1,11 +1,16 @@
+import { useUser } from '@/auth';
 import { Dithering } from '@paper-design/shaders-react';
 import { useTranslation } from '@repo/i18n';
 import { ArrowRight } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import Link from 'next/link';
 
 export function HeroSection() {
   const { t } = useTranslation();
   const { theme } = useTheme();
+  const { user, isLoading } = useUser();
+
+  const isLoggedIn = !!user;
 
   return (
     <section className="w-full">
@@ -36,10 +41,28 @@ export function HeroSection() {
               {t('dashboardForYourExpenses')}
             </p>
 
-            <button className="group bg-primary text-primary-foreground hover:bg-primary/90 hover:ring-primary/20 relative inline-flex h-14 cursor-pointer items-center justify-center gap-3 overflow-hidden rounded-full px-12 text-base font-medium transition-all duration-300 hover:scale-105 hover:ring-4 active:scale-95">
-              <span className="relative z-10">{t('getStarted')}</span>
-              <ArrowRight className="relative z-10 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
-            </button>
+            {isLoading ? (
+              <Link href="/auth">
+                <button className="group bg-primary text-primary-foreground hover:bg-primary/90 hover:ring-primary/20 relative inline-flex h-14 cursor-pointer items-center justify-center gap-3 overflow-hidden rounded-full px-12 text-base font-medium transition-all duration-300 hover:scale-105 hover:ring-4 active:scale-95">
+                  <span className="relative z-10">{t('dashboard')}</span>
+                  <ArrowRight className="relative z-10 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
+                </button>
+              </Link>
+            ) : isLoggedIn ? (
+              <Link href="/dashboard">
+                <button className="group bg-primary text-primary-foreground hover:bg-primary/90 hover:ring-primary/20 relative inline-flex h-14 cursor-pointer items-center justify-center gap-3 overflow-hidden rounded-full px-12 text-base font-medium transition-all duration-300 hover:scale-105 hover:ring-4 active:scale-95">
+                  <span className="relative z-10">{t('dashboard')}</span>
+                  <ArrowRight className="relative z-10 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
+                </button>
+              </Link>
+            ) : (
+              <Link href="/auth">
+                <button className="group bg-primary text-primary-foreground hover:bg-primary/90 hover:ring-primary/20 relative inline-flex h-14 cursor-pointer items-center justify-center gap-3 overflow-hidden rounded-full px-12 text-base font-medium transition-all duration-300 hover:scale-105 hover:ring-4 active:scale-95">
+                  <span className="relative z-10">{t('getStarted')}</span>
+                  <ArrowRight className="relative z-10 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
+                </button>
+              </Link>
+            )}
           </div>
         </div>
       </div>
