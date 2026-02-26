@@ -12,9 +12,6 @@ function get(key: string): string {
 }
 
 export const env = {
-  get BETTER_AUTH_URL() {
-    return get('BETTER_AUTH_URL');
-  },
   get MONGODB_URI() {
     return get('MONGODB_URI');
   },
@@ -38,5 +35,8 @@ export const env = {
   },
   get DISCORD_CLIENT_SECRET() {
     return get('DISCORD_CLIENT_SECRET');
+  },
+  get API_URL() {
+    return get('API_URL');
   },
 };
