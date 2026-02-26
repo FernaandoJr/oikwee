@@ -1,6 +1,6 @@
 'use client';
 import { useUser } from '@/auth';
-import { MenuToggleIcon } from '@/components/menu-toggle-icon';
+import { MenuToggleIcon } from '@/components/header/menu-toggle-icon';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { headerLinks } from '@/constants/header-links';
 import { cn } from '@/lib/utils';
@@ -21,7 +21,6 @@ interface HeaderProps {
 export function Header({
   disableSticky = false,
   forceBlur = false,
-  hideAuthButtons = false,
 }: HeaderProps) {
   const [open, setOpen] = useState(false);
   const scrolled = useScroll(10);
@@ -80,12 +79,6 @@ export function Header({
           </div>
         </div>
         <div className="hidden items-center gap-2 md:flex">
-          {!hideAuthButtons ||
-            (isLoggedIn && (
-              <Link href="/auth">
-                <Button variant="outline">{t('signIn')}</Button>
-              </Link>
-            ))}
           {isLoggedIn && (
             <div className="flex flex-col gap-2">
               <Link href="/dashboard" onClick={() => setOpen(false)}>
@@ -128,15 +121,6 @@ export function Header({
             </Link>
           ))}
         </div>
-        {!hideAuthButtons && (
-          <div className="flex flex-col gap-2">
-            <Link href="/auth" onClick={() => setOpen(false)}>
-              <Button variant="outline" className="w-full bg-transparent">
-                {t('signIn')}
-              </Button>
-            </Link>
-          </div>
-        )}
       </MobileMenu>
     </header>
   );

@@ -1,8 +1,8 @@
 'use client';
-import { AboutSection } from '@/components/about-section';
 import { BentoGrid } from '@/components/bento-grid';
 import { Header } from '@/components/header';
-import { HeroSection } from '@/components/hero-section';
+import { AboutSection } from '@/components/sections/about';
+import { HeroSection } from '@/components/sections/hero';
 import { useTranslation } from '@repo/i18n';
 import { Fragment } from 'react/jsx-runtime';
 
