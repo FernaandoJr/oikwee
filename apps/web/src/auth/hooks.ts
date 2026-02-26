@@ -73,6 +73,33 @@ export function useSignIn(): {
   };
 }
 
+export function useSignUp(): {
+  mutate: (params: { email: string; password: string }) => void;
+  isPending: boolean;
+  error: Error | null;
+} {
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: ({ email, password }: { email: string; password: string }) =>
+      authService.signUp(email, password),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user'] });
+      router.replace('/dashboard');
+    },
+    onError: (err) => {
+      toast.error(err.message ?? 'Sign up failed');
+    },
+  });
+
+  return {
+    mutate: mutation.mutate,
+    isPending: mutation.isPending,
+    error: mutation.error as Error | null,
+  };
+}
+
 export function useSignOut(): {
   mutate: () => void;
   isPending: boolean;

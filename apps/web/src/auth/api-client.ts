@@ -20,8 +20,10 @@ authApiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      const isSignIn = String(error.config?.url ?? '').includes('sign-in');
-      if (!isSignIn && typeof window !== 'undefined') {
+      const isAuth =
+        String(error.config?.url ?? '').includes('sign-in') ||
+        String(error.config?.url ?? '').includes('sign-up');
+      if (!isAuth && typeof window !== 'undefined') {
         clearAccessToken();
         window.location.href = '/auth';
       }

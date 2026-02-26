@@ -17,20 +17,7 @@ export class AuthService {
         password,
         rememberMe,
       });
-      const tokenFromHeader = res.headers?.['set-auth-token'];
-      const data = res.data as {
-        token?: string;
-        access_token?: string;
-        accessToken?: string;
-        session?: { token?: string };
-      };
-      const token =
-        typeof tokenFromHeader === 'string'
-          ? tokenFromHeader
-          : (data?.token ??
-            data?.access_token ??
-            data?.accessToken ??
-            data?.session?.token);
+      const token = this.extractToken(res);
       if (!token) throw new Error('Login failed');
       setAccessToken(token);
       return { accessToken: token };
@@ -38,6 +25,40 @@ export class AuthService {
       console.error(err);
       throw new Error('Login failed');
     }
+  }
+
+  async signUp(email: string, password: string): Promise<SignInResult> {
+    try {
+      const res = await this.client.post('auth/sign-up/email', {
+        email,
+        password,
+      });
+      const token = this.extractToken(res);
+      if (!token) throw new Error('Sign up failed');
+      setAccessToken(token);
+      return { accessToken: token };
+    } catch (err: unknown) {
+      console.error(err);
+      throw new Error('Sign up failed');
+    }
+  }
+
+  private extractToken(res: { headers?: Record<string, unknown>; data?: unknown }): string | null {
+    const tokenFromHeader = res.headers?.['set-auth-token'];
+    const data = res.data as {
+      token?: string;
+      access_token?: string;
+      accessToken?: string;
+      session?: { token?: string };
+    } | undefined;
+    const token =
+      typeof tokenFromHeader === 'string'
+        ? tokenFromHeader
+        : (data?.token ??
+          data?.access_token ??
+          data?.accessToken ??
+          data?.session?.token);
+    return token ?? null;
   }
 
   async getSession(): Promise<MeResponse> {

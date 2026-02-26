@@ -9,7 +9,7 @@ export {
   AUTH_COOKIE_NAME,
 } from './storage';
 export { heroImageSrc } from './constants';
-export { useUser, useSignIn, useSignOut } from './hooks';
+export { useUser, useSignIn, useSignUp, useSignOut } from './hooks';
 export type {
   AuthUser,
   AuthSession,
