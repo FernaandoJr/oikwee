@@ -4,12 +4,22 @@ import {
   BookOpen,
   Bot,
   LifeBuoy,
+  LogOut,
+  Moon,
   Send,
   Settings2,
   SquareTerminal,
+  Sun,
 } from 'lucide-react';
+import { useTheme } from 'next-themes';
 import * as React from 'react';
 
+import { useSignOut, useUser } from '@/auth';
+import {
+  MenuSearch,
+  type MenuActionItem,
+  type MenuOptionItem,
+} from '@/components/sidebar/menu-search';
 import { NavMain } from '@/components/sidebar/nav-main';
 import { NavSecondary } from '@/components/sidebar/nav-secondary';
 import { NavUser } from '@/components/sidebar/nav-user';
@@ -22,17 +32,12 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { useUser } from '@/auth';
 import { useTranslation } from '@repo/i18n';
 import Image from 'next/image';
 import Link from 'next/link';
+import { ComponentProps, useMemo } from 'react';
 
 const data = {
-  user: {
-    name: 'shadcn',
-    email: 'm@example.com',
-    avatar: '/avatars/shadcn.jpg',
-  },
   navMain: [
     {
       title: 'Playground',
@@ -134,9 +139,49 @@ const data = {
   ],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+function navMainToMenuItems(): MenuOptionItem[] {
+  return data.navMain.map((item) => ({
+    label: item.title,
+    path: item.url,
+    icon: React.createElement(item.icon),
+    children: item.items?.map((sub) => ({
+      label: sub.title,
+      path: sub.url,
+    })),
+  }));
+}
+
+export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
   const { t } = useTranslation();
   const { user, isLoading } = useUser();
+  const { theme, setTheme } = useTheme();
+  const { mutate: signOut } = useSignOut();
+  const menuSearchItems = useMemo(() => navMainToMenuItems(), []);
+
+  const menuSearchActions = useMemo<MenuActionItem[]>(
+    () => [
+      {
+        id: 'theme-toggle',
+        label: 'Alternar modo',
+        icon:
+          theme === 'light' ? (
+            <Sun className="size-4" />
+          ) : (
+            <Moon className="size-4" />
+          ),
+        keywords: ['tema', 'dark', 'light', 'escuro', 'claro', 'modo'],
+        onSelect: () => setTheme(theme === 'dark' ? 'light' : 'dark'),
+      },
+      {
+        id: 'logout',
+        label: 'Sair',
+        icon: <LogOut className="size-4" />,
+        keywords: ['logout', 'sair', 'desconectar'],
+        onSelect: () => signOut(),
+      },
+    ],
+    [theme, setTheme, signOut],
+  );
 
   return (
     <Sidebar variant="inset" {...props}>
@@ -165,6 +210,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
+        <MenuSearch items={menuSearchItems} actions={menuSearchActions} />
         <NavMain items={data.navMain} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
