@@ -1,9 +1,10 @@
-import { ThemeProvider } from '@/components/ui/theme-provider';
-import { Toaster } from '@/components/ui/sonner';
 import { QueryProvider } from '@/components/providers/query-provider';
+import { Toaster } from '@/components/ui/sonner';
+import { ThemeProvider } from '@/components/ui/theme-provider';
 import type { Metadata } from 'next';
 import { Fira_Code, Outfit } from 'next/font/google';
 import Script from 'next/script';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import './globals.css';
 
 const outfit = Outfit({
@@ -42,8 +43,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <QueryProvider>{children}</QueryProvider>
-          <Toaster position="bottom-right" />
+          <NuqsAdapter>
+            <QueryProvider>{children}</QueryProvider>
+            <Toaster position="bottom-right" />
+          </NuqsAdapter>
         </ThemeProvider>
       </body>
     </html>
