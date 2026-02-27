@@ -32,7 +32,7 @@ export default function AuthCallbackPage() {
   }, [router]);
 
   if (status === 'error') {
-    router.replace('/auth?error=callback');
+    router.replace('/auth/sign-in?error=callback');
     return null;
   }
 

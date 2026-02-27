@@ -1,7 +1,7 @@
 'use client';
 
 import { authClient, getOAuthRedirectUrl, useSignUp } from '@/auth';
-import { PasswordWithConfirmFields } from '@/components/auth/password-field-with-strength';
+import { PasswordFieldWithStrength } from '@/components/auth/password-field-with-strength';
 import { isStrongPassword } from '@/components/auth/password-strength';
 import { SocialLogo } from '@/components/auth/social-logo';
 import { Button } from '@/components/ui/button';
@@ -18,10 +18,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from '@repo/i18n';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
+import Loader from '../loader';
+import { PasswordInput } from './password-input';
 
 interface SignUpFormValues {
   email: string;
@@ -40,6 +43,7 @@ export function SignUpForm({ handleSignIn }: SignUpFormProps) {
 
   const { t } = useTranslation();
   const { mutate: signUp, isPending: isSubmitting } = useSignUp();
+  const router = useRouter();
 
   const signUpSchema = useMemo(
     () =>
@@ -124,9 +128,6 @@ export function SignUpForm({ handleSignIn }: SignUpFormProps) {
           {t('welcome')}
         </span>
       </h1>
-      <p className="animate-element animate-delay-200 text-muted-foreground">
-        {t('accessYourAccountAndContinue')}
-      </p>
 
       <Form {...form}>
         <form className="space-y-5" onSubmit={form.handleSubmit(onSubmit)}>
@@ -150,7 +151,45 @@ export function SignUpForm({ handleSignIn }: SignUpFormProps) {
             )}
           />
 
-          <PasswordWithConfirmFields />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem className="animate-element animate-delay-400">
+                <FormLabel className="text-muted-foreground text-sm font-medium">
+                  {t('password')}
+                </FormLabel>
+                <FormControl>
+                  <PasswordFieldWithStrength
+                    field={field}
+                    placeholder={t('enterYourPassword')}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="confirmPassword"
+            render={({ field }) => (
+              <FormItem className="animate-element animate-delay-500">
+                <FormLabel className="text-muted-foreground text-sm font-medium">
+                  {t('confirmPassword')}
+                </FormLabel>
+                <FormControl>
+                  <PasswordInput
+                    value={field.value}
+                    onChange={field.onChange}
+                    onBlur={field.onBlur}
+                    placeholder={t('enterYourPassword')}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           <Button
             type="submit"
@@ -171,12 +210,12 @@ export function SignUpForm({ handleSignIn }: SignUpFormProps) {
         </span>
       </div>
 
-      <div className="animate-element animate-delay-800 flex w-full flex-col gap-3">
+      <div className="animate-element animate-delay-800 flex flex-row justify-center gap-3">
         <Button
           variant="outline"
           onClick={handleGoogleSignIn}
           disabled={googleLoading || githubLoading || discordLoading}
-          className="w-full cursor-pointer py-4 select-none"
+          className="cursor-pointer py-4 select-none"
         >
           <Image
             src="/logo/google.svg"
@@ -185,31 +224,25 @@ export function SignUpForm({ handleSignIn }: SignUpFormProps) {
             height={20}
             className="size-5 shrink-0"
           />
-          {googleLoading
-            ? (t('signingIn') ?? 'Signing in...')
-            : t('continueWithGoogle')}
+          {googleLoading ? <Loader size="sm" /> : null}
         </Button>
         <Button
           variant="outline"
           onClick={handleGitHubSignIn}
           disabled={googleLoading || githubLoading || discordLoading}
-          className="w-full cursor-pointer py-4 select-none"
+          className="cursor-pointer py-4 select-none"
         >
           <SocialLogo src="/logo/github.svg" alt="GitHub" />
-          {githubLoading
-            ? (t('signingIn') ?? 'Signing in...')
-            : t('continueWithGitHub')}
+          {githubLoading ? <Loader size="sm" /> : null}
         </Button>
         <Button
           variant="outline"
           onClick={handleDiscordSignIn}
           disabled={googleLoading || githubLoading || discordLoading}
-          className="w-full cursor-pointer py-4 select-none"
+          className="cursor-pointer py-4 select-none"
         >
           <SocialLogo src="/logo/discord.svg" alt="Discord" />
-          {discordLoading
-            ? (t('signingIn') ?? 'Signing in...')
-            : t('continueWithDiscord')}
+          {discordLoading ? <Loader size="sm" /> : null}
         </Button>
       </div>
 
@@ -219,7 +252,7 @@ export function SignUpForm({ handleSignIn }: SignUpFormProps) {
           href="#"
           onClick={(e) => {
             e.preventDefault();
-            handleSignIn();
+            router.push('/auth/sign-in');
           }}
           className="text-primary transition-colors hover:underline"
         >

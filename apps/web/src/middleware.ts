@@ -15,7 +15,11 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  if (request.nextUrl.pathname === '/auth' && isAuth) {
+  const isAuthPage =
+    request.nextUrl.pathname === '/auth' ||
+    request.nextUrl.pathname === '/auth/sign-in' ||
+    request.nextUrl.pathname === '/auth/sign-up';
+  if (isAuthPage && isAuth) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
@@ -23,5 +27,12 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard', '/dashboard/:path*', '/auth', '/auth/callback'],
+  matcher: [
+    '/dashboard',
+    '/dashboard/:path*',
+    '/auth',
+    '/auth/sign-in',
+    '/auth/sign-up',
+    '/auth/callback',
+  ],
 };

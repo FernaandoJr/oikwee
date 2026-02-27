@@ -27,7 +27,7 @@ apiClient.interceptors.response.use(
       clearAccessToken();
       if (typeof window !== 'undefined') {
         toast.error('Sessão expirada');
-        window.location.href = '/auth';
+        window.location.href = '/auth/sign-in';
       }
     }
     return Promise.reject(error);

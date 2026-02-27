@@ -111,7 +111,7 @@ export function useSignOut(): {
     mutationFn: () => authService.signOut(),
     onSuccess: () => {
       queryClient.removeQueries({ queryKey: ['user'] });
-      router.replace('/auth');
+      router.replace('/auth/sign-in');
     },
     onError: () => {
       toast.error('Erro ao sair. Tente novamente.');

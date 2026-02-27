@@ -18,10 +18,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from '@repo/i18n';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
+import Loader from '../loader';
 
 interface SignInFormValues {
   email: string;
@@ -29,17 +31,14 @@ interface SignInFormValues {
   rememberMe: boolean;
 }
 
-interface SignInFormProps {
-  handleSignUp: () => void;
-}
-
-export function SignInForm({ handleSignUp }: SignInFormProps) {
+export function SignInForm() {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [githubLoading, setGithubLoading] = useState(false);
   const [discordLoading, setDiscordLoading] = useState(false);
 
   const { t } = useTranslation();
   const { mutate: signIn, isPending: isSubmitting } = useSignIn();
+  const router = useRouter();
 
   const signInSchema = useMemo(
     () =>
@@ -128,10 +127,7 @@ export function SignInForm({ handleSignUp }: SignInFormProps) {
       </p>
 
       <Form {...form}>
-        <form
-          className="space-y-5"
-          onSubmit={form.handleSubmit(handleSignIn)}
-        >
+        <form className="space-y-5" onSubmit={form.handleSubmit(handleSignIn)}>
           <FormField
             control={form.control}
             name="email"
@@ -210,9 +206,7 @@ export function SignInForm({ handleSignUp }: SignInFormProps) {
             className="animate-element animate-delay-600 w-full py-4 select-none"
             disabled={isSubmitting}
           >
-            {isSubmitting
-              ? (t('signingIn') ?? 'Signing in...')
-              : t('signIn')}
+            {isSubmitting ? (t('signingIn') ?? 'Signing in...') : t('signIn')}
           </Button>
         </form>
       </Form>
@@ -224,12 +218,12 @@ export function SignInForm({ handleSignUp }: SignInFormProps) {
         </span>
       </div>
 
-      <div className="animate-element animate-delay-800 flex w-full flex-col gap-3">
+      <div className="animate-element animate-delay-800 flex flex-row justify-center gap-3">
         <Button
           variant="outline"
           onClick={handleGoogleSignIn}
           disabled={googleLoading || githubLoading || discordLoading}
-          className="w-full cursor-pointer py-4 select-none"
+          className="cursor-pointer py-4 select-none"
         >
           <Image
             src="/logo/google.svg"
@@ -238,31 +232,25 @@ export function SignInForm({ handleSignUp }: SignInFormProps) {
             height={20}
             className="size-5 shrink-0"
           />
-          {googleLoading
-            ? (t('signingIn') ?? 'Signing in...')
-            : t('continueWithGoogle')}
+          {googleLoading ? <Loader size="sm" /> : null}
         </Button>
         <Button
           variant="outline"
           onClick={handleGitHubSignIn}
           disabled={googleLoading || githubLoading || discordLoading}
-          className="w-full cursor-pointer py-4 select-none"
+          className="cursor-pointer py-4 select-none"
         >
           <SocialLogo src="/logo/github.svg" alt="GitHub" />
-          {githubLoading
-            ? (t('signingIn') ?? 'Signing in...')
-            : t('continueWithGitHub')}
+          {githubLoading ? <Loader size="sm" /> : null}
         </Button>
         <Button
           variant="outline"
           onClick={handleDiscordSignIn}
           disabled={googleLoading || githubLoading || discordLoading}
-          className="w-full cursor-pointer py-4 select-none"
+          className="cursor-pointer py-4 select-none"
         >
           <SocialLogo src="/logo/discord.svg" alt="Discord" />
-          {discordLoading
-            ? (t('signingIn') ?? 'Signing in...')
-            : t('continueWithDiscord')}
+          {discordLoading ? <Loader size="sm" /> : null}
         </Button>
       </div>
 
@@ -272,7 +260,7 @@ export function SignInForm({ handleSignUp }: SignInFormProps) {
           href="#"
           onClick={(e) => {
             e.preventDefault();
-            handleSignUp();
+            router.push('/auth/sign-up');
           }}
           className="text-primary transition-colors hover:underline"
         >

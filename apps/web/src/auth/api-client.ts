@@ -25,7 +25,7 @@ authApiClient.interceptors.response.use(
         String(error.config?.url ?? '').includes('sign-up');
       if (!isAuth && typeof window !== 'undefined') {
         clearAccessToken();
-        window.location.href = '/auth';
+        window.location.href = '/auth/sign-in';
       }
     }
     return Promise.reject(error);

@@ -47,7 +47,7 @@ export function PasswordStrengthIndicator({
         {t(getStrengthTextKey(score))}. {t('passwordStrengthMustContain')}
       </p>
       <ul className="space-y-1.5" aria-label={t('passwordStrengthMustContain')}>
-        {strength.map((req, index) => (
+        {strength.map((req) => (
           <li key={req.textKey} className="flex items-center gap-2">
             {req.met ? (
               <Check size={16} className="text-emerald-500" aria-hidden />
