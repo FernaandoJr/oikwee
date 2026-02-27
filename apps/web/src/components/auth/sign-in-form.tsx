@@ -4,7 +4,6 @@ import { authClient, getOAuthRedirectUrl, useSignIn } from '@/auth';
 import { PasswordInput } from '@/components/auth/password-input';
 import { SocialLogo } from '@/components/auth/social-logo';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import {
   Form,
   FormControl,
@@ -28,7 +27,6 @@ import Loader from '../loader';
 interface SignInFormValues {
   email: string;
   password: string;
-  rememberMe: boolean;
 }
 
 export function SignInForm() {
@@ -47,7 +45,6 @@ export function SignInForm() {
           .email(t('validationEmailInvalid'))
           .min(1, t('validationEmailRequired')),
         password: z.string().min(6, t('validationPasswordMin')),
-        rememberMe: z.boolean(),
       }),
     [t],
   );
@@ -57,7 +54,6 @@ export function SignInForm() {
     defaultValues: {
       email: '',
       password: '',
-      rememberMe: false,
     },
   });
 
@@ -65,7 +61,6 @@ export function SignInForm() {
     signIn({
       email: values.email,
       password: values.password,
-      rememberMe: values.rememberMe,
     });
   };
 
@@ -173,26 +168,7 @@ export function SignInForm() {
             )}
           />
 
-          <div className="animate-element animate-delay-500 flex items-center justify-between text-sm">
-            <FormField
-              control={form.control}
-              name="rememberMe"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex cursor-pointer items-center gap-3">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <span className="text-foreground/90">
-                      {t('keepMeSignedIn')}
-                    </span>
-                  </FormLabel>
-                </FormItem>
-              )}
-            />
+          <div className="animate-element animate-delay-500 flex justify-end text-sm">
             <Link
               href="#"
               onClick={(e) => {

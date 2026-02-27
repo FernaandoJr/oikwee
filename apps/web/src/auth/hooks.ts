@@ -36,11 +36,7 @@ export function useUser(): {
 }
 
 export function useSignIn(): {
-  mutate: (params: {
-    email: string;
-    password: string;
-    rememberMe: boolean;
-  }) => void;
+  mutate: (params: { email: string; password: string }) => void;
   isPending: boolean;
   error: Error | null;
 } {
@@ -48,15 +44,8 @@ export function useSignIn(): {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: ({
-      email,
-      password,
-      rememberMe,
-    }: {
-      email: string;
-      password: string;
-      rememberMe: boolean;
-    }) => authService.signIn(email, password, rememberMe),
+    mutationFn: ({ email, password }: { email: string; password: string }) =>
+      authService.signIn(email, password),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user'] });
       router.replace('/dashboard');
