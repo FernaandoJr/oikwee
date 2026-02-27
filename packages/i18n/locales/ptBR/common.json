@@ -26,7 +26,7 @@
   "validationPasswordMin": "A senha deve ter pelo menos 6 caracteres",
   "validationPasswordMatch": "As senhas não coincidem",
   "confirmPassword": "Confirmar senha",
-  "alreadyHaveAccount": "Já tem conta?",
+  "alreadyHaveAccount": "Já tem uma conta?",
   "passwordReqLength": "Pelo menos 8 caracteres",
   "passwordReqNumber": "Pelo menos 1 número",
   "passwordReqLower": "Pelo menos 1 letra minúscula",

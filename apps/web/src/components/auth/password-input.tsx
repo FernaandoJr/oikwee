@@ -14,12 +14,14 @@ export function PasswordInput({
   onChange,
   onBlur,
   placeholder,
+  autoComplete,
   'aria-describedby': ariaDescribedBy,
 }: {
   value: string;
   onChange: (value: string) => void;
   onBlur: () => void;
   placeholder: string;
+  autoComplete?: React.InputHTMLAttributes<HTMLInputElement>['autoComplete'];
   'aria-describedby'?: string;
 }) {
   const [showPassword, setShowPassword] = useState(false);
@@ -33,6 +35,7 @@ export function PasswordInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onBlur={onBlur}
+        autoComplete={autoComplete}
         aria-describedby={ariaDescribedBy}
       />
       <InputGroupAddon align="inline-end">

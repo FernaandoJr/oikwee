@@ -127,7 +127,11 @@ export function SignInForm() {
       </p>
 
       <Form {...form}>
-        <form className="space-y-5" onSubmit={form.handleSubmit(handleSignIn)}>
+        <form
+          className="space-y-5"
+          onSubmit={form.handleSubmit(handleSignIn)}
+          autoComplete="off"
+        >
           <FormField
             control={form.control}
             name="email"
@@ -223,34 +227,43 @@ export function SignInForm() {
           variant="outline"
           onClick={handleGoogleSignIn}
           disabled={googleLoading || githubLoading || discordLoading}
-          className="cursor-pointer py-4 select-none"
+          className="flex-1 cursor-pointer py-4 select-none"
         >
-          <Image
-            src="/logo/google.svg"
-            alt="Google"
-            width={20}
-            height={20}
-            className="size-5 shrink-0"
-          />
-          {googleLoading ? <Loader size="sm" /> : null}
+          {googleLoading ? (
+            <Loader size="xs" />
+          ) : (
+            <Image
+              src="/logo/google.svg"
+              alt="Google"
+              width={20}
+              height={20}
+              className="size-5 shrink-0"
+            />
+          )}
         </Button>
         <Button
           variant="outline"
           onClick={handleGitHubSignIn}
           disabled={googleLoading || githubLoading || discordLoading}
-          className="cursor-pointer py-4 select-none"
+          className="flex-1 cursor-pointer py-4 select-none"
         >
-          <SocialLogo src="/logo/github.svg" alt="GitHub" />
-          {githubLoading ? <Loader size="sm" /> : null}
+          {githubLoading ? (
+            <Loader size="xs" />
+          ) : (
+            <SocialLogo src="/logo/github.svg" alt="GitHub" />
+          )}
         </Button>
         <Button
           variant="outline"
           onClick={handleDiscordSignIn}
           disabled={googleLoading || githubLoading || discordLoading}
-          className="cursor-pointer py-4 select-none"
+          className="flex-1 cursor-pointer py-4 select-none"
         >
-          <SocialLogo src="/logo/discord.svg" alt="Discord" />
-          {discordLoading ? <Loader size="sm" /> : null}
+          {discordLoading ? (
+            <Loader size="xs" />
+          ) : (
+            <SocialLogo src="/logo/discord.svg" alt="Discord" />
+          )}
         </Button>
       </div>
 

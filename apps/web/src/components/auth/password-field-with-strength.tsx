@@ -1,5 +1,7 @@
 'use client';
 
+import { PasswordInput } from '@/components/auth/password-input';
+import { PasswordStrengthIndicator } from '@/components/auth/password-strength-indicator';
 import {
   FormControl,
   FormField,
@@ -8,13 +10,15 @@ import {
   FormMessage,
   useFormField,
 } from '@/components/ui/form';
-import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from '@repo/i18n';
-import { PasswordInput } from '@/components/auth/password-input';
-import { PasswordStrengthIndicator } from '@/components/auth/password-strength-indicator';
+import { useFormContext, useWatch } from 'react-hook-form';
 
 interface PasswordFieldWithStrengthProps {
-  field: { value: string; onChange: (value: string) => void; onBlur: () => void };
+  field: {
+    value: string;
+    onChange: (value: string) => void;
+    onBlur: () => void;
+  };
   placeholder: string;
 }
 
@@ -81,6 +85,7 @@ export function PasswordWithConfirmFields() {
                 onChange={field.onChange}
                 onBlur={field.onBlur}
                 placeholder={t('enterYourPassword')}
+                autoComplete="new-password"
               />
             </FormControl>
             <FormMessage />
