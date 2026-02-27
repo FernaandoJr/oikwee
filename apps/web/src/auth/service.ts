@@ -27,11 +27,16 @@ export class AuthService {
     }
   }
 
-  async signUp(email: string, password: string): Promise<SignInResult> {
+  async signUp(
+    email: string,
+    password: string,
+    name: string,
+  ): Promise<SignInResult> {
     try {
       const res = await this.client.post('auth/sign-up/email', {
         email,
         password,
+        name,
       });
       const token = this.extractToken(res);
       if (!token) throw new Error('Sign up failed');
@@ -43,14 +48,19 @@ export class AuthService {
     }
   }
 
-  private extractToken(res: { headers?: Record<string, unknown>; data?: unknown }): string | null {
+  private extractToken(res: {
+    headers?: Record<string, unknown>;
+    data?: unknown;
+  }): string | null {
     const tokenFromHeader = res.headers?.['set-auth-token'];
-    const data = res.data as {
-      token?: string;
-      access_token?: string;
-      accessToken?: string;
-      session?: { token?: string };
-    } | undefined;
+    const data = res.data as
+      | {
+          token?: string;
+          access_token?: string;
+          accessToken?: string;
+          session?: { token?: string };
+        }
+      | undefined;
     const token =
       typeof tokenFromHeader === 'string'
         ? tokenFromHeader

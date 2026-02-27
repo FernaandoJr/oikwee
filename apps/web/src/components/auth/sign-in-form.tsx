@@ -128,7 +128,7 @@ export function SignInForm() {
 
       <Form {...form}>
         <form
-          className="space-y-5"
+          className="space-y-2"
           onSubmit={form.handleSubmit(handleSignIn)}
           autoComplete="off"
         >

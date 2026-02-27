@@ -27,6 +27,7 @@ import Loader from '../loader';
 import { PasswordInput } from './password-input';
 
 interface SignUpFormValues {
+  name: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -49,6 +50,7 @@ export function SignUpForm({ handleSignIn }: SignUpFormProps) {
     () =>
       z
         .object({
+          name: z.string().min(3, t('validationNameRequired')),
           email: z
             .email(t('validationEmailInvalid'))
             .min(1, t('validationEmailRequired')),
@@ -69,6 +71,7 @@ export function SignUpForm({ handleSignIn }: SignUpFormProps) {
   const form = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
+      name: '',
       email: '',
       password: '',
       confirmPassword: '',
@@ -76,7 +79,11 @@ export function SignUpForm({ handleSignIn }: SignUpFormProps) {
   });
 
   const onSubmit = (values: SignUpFormValues) => {
-    signUp({ email: values.email, password: values.password });
+    signUp({
+      name: values.name,
+      email: values.email,
+      password: values.password,
+    });
   };
 
   const handleGoogleSignIn = async () => {
@@ -122,7 +129,7 @@ export function SignUpForm({ handleSignIn }: SignUpFormProps) {
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-2">
       <h1 className="animate-element animate-delay-100 text-4xl leading-tight font-semibold md:text-5xl">
         <span className="text-foreground font-light tracking-tighter">
           {t('welcome')}
@@ -130,7 +137,27 @@ export function SignUpForm({ handleSignIn }: SignUpFormProps) {
       </h1>
 
       <Form {...form}>
-        <form className="space-y-5" onSubmit={form.handleSubmit(onSubmit)}>
+        <form className="space-y-2" onSubmit={form.handleSubmit(onSubmit)}>
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem className="animate-element animate-delay-200">
+                <FormLabel className="text-muted-foreground text-sm font-medium">
+                  {t('name')}
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder={t('enterYourName')}
+                    className="w-full p-4 text-sm shadow-none"
+                    autoComplete="name"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="email"
@@ -204,7 +231,7 @@ export function SignUpForm({ handleSignIn }: SignUpFormProps) {
         </form>
       </Form>
 
-      <div className="animate-element animate-delay-700 relative flex items-center justify-center select-none">
+      <div className="animate-element animate-delay-700 relative flex items-center justify-center py-4 select-none">
         <span className="border-border w-full border-t" />
         <span className="text-muted-foreground bg-background absolute px-4 text-sm">
           {t('orContinueWith')}

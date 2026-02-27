@@ -74,7 +74,7 @@ export function useSignIn(): {
 }
 
 export function useSignUp(): {
-  mutate: (params: { email: string; password: string }) => void;
+  mutate: (params: { email: string; password: string; name: string }) => void;
   isPending: boolean;
   error: Error | null;
 } {
@@ -82,8 +82,15 @@ export function useSignUp(): {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: ({ email, password }: { email: string; password: string }) =>
-      authService.signUp(email, password),
+    mutationFn: ({
+      email,
+      password,
+      name,
+    }: {
+      email: string;
+      password: string;
+      name: string;
+    }) => authService.signUp(email, password, name),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user'] });
       router.replace('/dashboard');
