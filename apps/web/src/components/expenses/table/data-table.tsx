@@ -1,6 +1,5 @@
 'use client';
 
-import * as React from 'react';
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -12,6 +11,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import * as React from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -23,6 +23,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { ExpensesDrawer } from '../drawer';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -34,8 +35,9 @@ export function DataTable<TData, TValue>({
   data,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] =
-    React.useState<ColumnFiltersState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    [],
+  );
 
   const table = useReactTable({
     data,
@@ -54,7 +56,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="w-full space-y-4">
-      <div className="flex items-center py-2">
+      <div className="flex items-center justify-between gap-4 py-2">
         <Input
           placeholder="Filtrar por descrição..."
           value={
@@ -65,6 +67,7 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
+        <ExpensesDrawer />
       </div>
       <div className="overflow-hidden rounded-md border">
         <Table>

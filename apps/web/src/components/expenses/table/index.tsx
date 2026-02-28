@@ -1,7 +1,7 @@
 'use client';
 
-import { DataTable } from './data-table';
 import { type Expense, columns } from './columns';
+import { DataTable } from './data-table';
 
 export type { Expense };
 
