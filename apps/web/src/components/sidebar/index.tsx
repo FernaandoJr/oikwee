@@ -1,15 +1,12 @@
 'use client';
 
 import {
-  BookOpen,
-  Bot,
-  LifeBuoy,
+  LayoutDashboard,
   LogOut,
   Moon,
-  Send,
-  Settings2,
-  SquareTerminal,
+  Receipt,
   Sun,
+  type LucideIcon,
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import * as React from 'react';
@@ -37,106 +34,36 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ComponentProps, useMemo } from 'react';
 
+interface NavMainItem {
+  title: string;
+  url: string;
+  icon: LucideIcon;
+  isActive?: boolean;
+  items?: NavMainItem[];
+}
+
 const data = {
   navMain: [
     {
-      title: 'Playground',
-      url: '#',
-      icon: SquareTerminal,
+      title: 'Dashboard',
+      url: '/dashboard',
+      icon: LayoutDashboard,
       isActive: true,
       items: [
         {
-          title: 'History',
-          url: '#',
-        },
-        {
-          title: 'Starred',
-          url: '#',
-        },
-        {
-          title: 'Settings',
-          url: '#',
+          title: 'Despesas',
+          url: '/dashboard/expenses',
+          icon: Receipt,
         },
       ],
     },
     {
-      title: 'Models',
-      url: '#',
-      icon: Bot,
-      items: [
-        {
-          title: 'Genesis',
-          url: '#',
-        },
-        {
-          title: 'Explorer',
-          url: '#',
-        },
-        {
-          title: 'Quantum',
-          url: '#',
-        },
-      ],
-    },
-    {
-      title: 'Documentation',
-      url: '#',
-      icon: BookOpen,
-      items: [
-        {
-          title: 'Introduction',
-          url: '#',
-        },
-        {
-          title: 'Get Started',
-          url: '#',
-        },
-        {
-          title: 'Tutorials',
-          url: '#',
-        },
-        {
-          title: 'Changelog',
-          url: '#',
-        },
-      ],
-    },
-    {
-      title: 'Settings',
-      url: '#',
-      icon: Settings2,
-      items: [
-        {
-          title: 'General',
-          url: '#',
-        },
-        {
-          title: 'Team',
-          url: '#',
-        },
-        {
-          title: 'Billing',
-          url: '#',
-        },
-        {
-          title: 'Limits',
-          url: '#',
-        },
-      ],
+      title: 'Despesas',
+      url: '/dashboard/expenses',
+      icon: Receipt,
     },
   ],
-  navSecondary: [
-    {
-      title: 'Support',
-      url: '#',
-      icon: LifeBuoy,
-    },
-    {
-      title: 'Feedback',
-      url: '#',
-      icon: Send,
-    },
-  ],
+  navSecondary: [] as { title: string; url: string; icon: LucideIcon }[],
 };
 
 function navMainToMenuItems(): MenuOptionItem[] {
@@ -189,7 +116,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <Link href="#" className="select-none">
+              <Link href="/dashboard" className="select-none">
                 <div className="bg-sidebar-secondary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
                   <Image
                     src="/logo/flat_color.svg"
@@ -212,7 +139,9 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <MenuSearch items={menuSearchItems} actions={menuSearchActions} />
         <NavMain items={data.navMain} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+        {data.navSecondary.length > 0 && (
+          <NavSecondary items={data.navSecondary} className="mt-auto" />
+        )}
       </SidebarContent>
       <SidebarFooter>
         {!isLoading && user && (
