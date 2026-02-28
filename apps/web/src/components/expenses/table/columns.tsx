@@ -4,8 +4,9 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Switch } from '@/components/ui/switch';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,6 +28,7 @@ export type Expense = {
 export const columns: ColumnDef<Expense>[] = [
   {
     accessorKey: 'isPaid',
+    meta: { className: 'w-16' },
     header: ({ column }) => (
       <Button
         variant="ghost"
@@ -37,7 +39,7 @@ export const columns: ColumnDef<Expense>[] = [
       </Button>
     ),
     cell: ({ row }) => (
-      <Checkbox
+      <Switch
         checked={row.getValue('isPaid')}
         disabled
         aria-label={row.getValue('isPaid') ? 'Pago' : 'Não pago'}
@@ -56,7 +58,9 @@ export const columns: ColumnDef<Expense>[] = [
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue('category')}</div>
+      <Badge variant="secondary" className="capitalize">
+        {row.getValue('category')}
+      </Badge>
     ),
   },
   {
