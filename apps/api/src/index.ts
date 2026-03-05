@@ -3,6 +3,7 @@ import { cors } from 'hono/cors';
 import { auth } from './auth.js';
 import { env } from './constants/envs.js';
 import authRoutes from './routes/auth.js';
+import expensesRoutes from './routes/expenses.js';
 
 type SessionUser = (typeof auth.$Infer)['Session']['user'];
 type SessionSession = (typeof auth.$Infer)['Session']['session'];
@@ -29,6 +30,7 @@ app.use('*', async (c, next) => {
 });
 
 app.route('/api/v1', authRoutes);
+app.route('/api/v1', expensesRoutes);
 
 app.get('/', (c) => c.text('OK'));
 

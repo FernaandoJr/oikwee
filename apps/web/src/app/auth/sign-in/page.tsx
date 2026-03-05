@@ -6,10 +6,10 @@ import { Header } from '@/components/header';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ImageDithering } from '@paper-design/shaders-react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Fragment, useEffect } from 'react';
+import { Fragment, Suspense, useEffect } from 'react';
 import { toast } from 'sonner';
 
-export default function SignInPage() {
+function OAuthCallbackHandler() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -20,8 +20,15 @@ export default function SignInPage() {
     }
   }, [searchParams, router]);
 
+  return null;
+}
+
+export default function SignInPage() {
   return (
     <Fragment>
+      <Suspense>
+        <OAuthCallbackHandler />
+      </Suspense>
       <Header disableSticky hideAuthButtons />
       <div className="font-geist flex h-[calc(100dvh-4rem)] w-full flex-col overflow-hidden md:flex-row">
         <ScrollArea className="min-h-0 flex-1">
