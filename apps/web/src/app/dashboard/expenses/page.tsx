@@ -13,8 +13,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@/components/ui/sidebar';
-
-import { ExpensesPageContent } from './expenses-content';
+import { ExpenseList } from '@/components/expenses/list';
 
 export default function ExpensesPage() {
   return (
@@ -43,7 +42,7 @@ export default function ExpensesPage() {
         </header>
         <div className="container mx-auto p-4">
           <h1 className="mb-6 text-2xl font-semibold">Despesas</h1>
-          <ExpensesPageContent />
+          <ExpenseList />
         </div>
       </SidebarInset>
     </SidebarProvider>

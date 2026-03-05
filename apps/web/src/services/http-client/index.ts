@@ -1,7 +1,9 @@
 import { AxiosInstance } from 'axios';
 import { IHttpClient, IHttpOptions, ISuccessResponse } from './types';
 
-export class HttpClient<T> implements IHttpClient<T> {
+export class HttpClient<T, TCreate = T, TUpdate = Partial<T>>
+  implements IHttpClient<T, TCreate, TUpdate>
+{
   http: AxiosInstance;
   version: string;
   baseURL: string;
@@ -18,11 +20,16 @@ export class HttpClient<T> implements IHttpClient<T> {
   }
 
   async getOne(id: string, options?: IHttpOptions): Promise<T> {
-    const response = await this.http.get<T>(`${options?.baseURL}/${id}`);
+    const response = await this.http.get<T>(
+      `${options?.baseURL ?? this.baseURL}/${id}`,
+    );
     return response.data;
   }
 
-  async create(values: T, options?: IHttpOptions): Promise<ISuccessResponse> {
+  async create(
+    values: TCreate,
+    options?: IHttpOptions,
+  ): Promise<ISuccessResponse> {
     const response = await this.http.post<ISuccessResponse>(
       options?.baseURL ?? this.baseURL,
       values,
@@ -44,7 +51,7 @@ export class HttpClient<T> implements IHttpClient<T> {
 
   async patch(
     id: string,
-    values: T,
+    values: TUpdate,
     options?: IHttpOptions,
   ): Promise<ISuccessResponse> {
     const response = await this.http.patch<ISuccessResponse>(

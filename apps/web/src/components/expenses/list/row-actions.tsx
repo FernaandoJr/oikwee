@@ -1,8 +1,5 @@
 'use client';
 
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { MoreHorizontal } from 'lucide-react';
-
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -10,29 +7,22 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useFormContext } from '@/contexts/form-context';
-import { expensesService } from '@/services/expenses';
-import { Expense } from '@/services/expenses/types';
-import { toast } from 'sonner';
-import { expensesQueryKeys } from '../constants/query-keys';
+import { useRouter } from 'next/navigation';
+import { MoreHorizontal } from 'lucide-react';
+import type { Expense } from '../types';
 
-export function ExpenseRowActions({ expense }: { expense: Expense }) {
-  const queryClient = useQueryClient();
-  const { openForm } = useFormContext();
-  const mutation = useMutation({
-    mutationFn: () => expensesService.delete(expense.id!),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: expensesQueryKeys.list() });
-      toast.success('Despesa excluída com sucesso');
-    },
-    onError: () => {
-      toast.error('Erro ao excluir despesa');
-    },
-  });
+interface ExpenseRowActionsProps {
+  expense: Expense;
+  onDelete: (id: string) => void;
+  isDeleting: boolean;
+}
 
-  const handleDelete = () => {
-    mutation.mutate();
-  };
+export function ExpenseRowActions({
+  expense,
+  onDelete,
+  isDeleting,
+}: ExpenseRowActionsProps) {
+  const router = useRouter();
 
   return (
     <DropdownMenu>
@@ -43,13 +33,17 @@ export function ExpenseRowActions({ expense }: { expense: Expense }) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-40">
-        <DropdownMenuItem onClick={() => openForm('expense', 'edit', expense)}>
+        <DropdownMenuItem
+          onClick={() =>
+            router.push(`/dashboard/expenses/edit/${expense.id}`)
+          }
+        >
           Editar
         </DropdownMenuItem>
         <DropdownMenuItem
           className="text-destructive"
-          onClick={handleDelete}
-          disabled={mutation.isPending}
+          onClick={() => expense.id && onDelete(expense.id)}
+          disabled={isDeleting}
         >
           Excluir
         </DropdownMenuItem>

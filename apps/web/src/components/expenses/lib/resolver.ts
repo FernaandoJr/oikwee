@@ -1,14 +1,13 @@
-'use client';
 import type { FieldValues, Resolver } from 'react-hook-form';
-import z from 'zod';
+import type { ZodType } from 'zod';
 
 export function zodV4Resolver<T extends FieldValues>(
-  schema: z.ZodType<T>,
+  schema: ZodType<T>,
 ): Resolver<T> {
-  return (async (values) => {
+  return (async (values: T) => {
     const result = schema.safeParse(values);
     if (result.success) {
-      return { values: result.data, errors: {} };
+      return { values: result.data as T, errors: {} };
     }
     const fieldErrors: Record<string, { type: string; message: string }> = {};
     for (const issue of result.error.issues) {

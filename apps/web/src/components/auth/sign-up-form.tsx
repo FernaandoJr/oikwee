@@ -34,7 +34,7 @@ interface SignUpFormValues {
 }
 
 interface SignUpFormProps {
-  handleSignIn: () => void;
+  handleSignIn?: () => void;
 }
 
 export function SignUpForm({ handleSignIn }: SignUpFormProps) {

@@ -1,7 +1,7 @@
-export interface IHttpClient<T> {
-  get(options: IHttpOptions): Promise<T[]>;
+export interface IHttpClient<T, TCreate = T, TUpdate = Partial<T>> {
+  get(options?: IHttpOptions): Promise<T[]>;
   getOne(id: string, options?: IHttpOptions): Promise<T>;
-  create(values: T, options?: IHttpOptions): Promise<ISuccessResponse>;
+  create(values: TCreate, options?: IHttpOptions): Promise<ISuccessResponse>;
   update(
     id: string,
     values: T,
@@ -9,10 +9,10 @@ export interface IHttpClient<T> {
   ): Promise<ISuccessResponse>;
   patch(
     id: string,
-    values: T,
+    values: TUpdate,
     options?: IHttpOptions,
   ): Promise<ISuccessResponse>;
-  delete(id: string, options: IHttpOptions): Promise<ISuccessResponse>;
+  delete(id: string, options?: IHttpOptions): Promise<ISuccessResponse>;
 }
 
 export interface ISuccessResponse {

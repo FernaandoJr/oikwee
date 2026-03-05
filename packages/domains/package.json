@@ -1,0 +1,12 @@
+{
+  "name": "@oikwee/domains",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./expenses": "./src/expenses/index.ts"
+  },
+  "peerDependencies": {
+    "zod": "^4"
+  }
+}
