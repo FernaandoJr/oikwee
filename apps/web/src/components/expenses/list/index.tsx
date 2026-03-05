@@ -1,18 +1,5 @@
 'use client';
 
-import {
-  type ColumnDef,
-  type ColumnFiltersState,
-  type SortingState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
-import * as React from 'react';
-
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -23,25 +10,34 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { FormProvider, useFormContext } from '@/contexts/form-context';
+import { Expense } from '@/services/expenses/types';
+import {
+  type ColumnFiltersState,
+  type SortingState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
+import { Plus } from 'lucide-react';
+import { useState } from 'react';
+import { expenseColumns } from '../constants/columns';
 import { ExpensesDrawer } from '../drawer';
-
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+interface ExpensesTableProps {
+  data: Expense[];
 }
 
-export function DataTable<TData, TValue>({
-  columns,
-  data,
-}: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
-  );
+function ExpensesListContent({ data }: ExpensesTableProps) {
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const { formType, mode, data: formData, openForm, closeForm } = useFormContext();
 
   const table = useReactTable({
     data,
-    columns,
+    columns: expenseColumns,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -53,6 +49,8 @@ export function DataTable<TData, TValue>({
       columnFilters,
     },
   });
+
+  const expenseFormOpen = formType === 'expense';
 
   return (
     <div className="w-full space-y-4">
@@ -67,8 +65,17 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
-        <ExpensesDrawer />
+        <Button onClick={() => openForm('expense', 'new')}>
+          <Plus className="size-4" />
+          Nova despesa
+        </Button>
       </div>
+      <ExpensesDrawer
+        open={expenseFormOpen}
+        onOpenChange={(open) => !open && closeForm()}
+        isEdit={mode === 'edit'}
+        expense={expenseFormOpen ? (formData as Expense | null) : null}
+      />
       <div className="overflow-hidden rounded-md border">
         <Table>
           <TableHeader>
@@ -77,7 +84,13 @@ export function DataTable<TData, TValue>({
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className={(header.column.columnDef.meta as { className?: string } | undefined)?.className}
+                    className={
+                      (
+                        header.column.columnDef.meta as
+                          | { className?: string }
+                          | undefined
+                      )?.className
+                    }
                   >
                     {header.isPlaceholder
                       ? null
@@ -100,7 +113,13 @@ export function DataTable<TData, TValue>({
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
-                      className={(cell.column.columnDef.meta as { className?: string } | undefined)?.className}
+                      className={
+                        (
+                          cell.column.columnDef.meta as
+                            | { className?: string }
+                            | undefined
+                        )?.className
+                      }
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
@@ -113,7 +132,7 @@ export function DataTable<TData, TValue>({
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={columns.length}
+                  colSpan={expenseColumns.length}
                   className="h-24 text-center"
                 >
                   Nenhum resultado.
@@ -142,5 +161,13 @@ export function DataTable<TData, TValue>({
         </Button>
       </div>
     </div>
+  );
+}
+
+export function HandlerList({ data }: ExpensesTableProps) {
+  return (
+    <FormProvider>
+      <ExpensesListContent data={data} />
+    </FormProvider>
   );
 }

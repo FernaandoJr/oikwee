@@ -6,10 +6,12 @@
   },
   "dependencies": {
     "@hono/node-server": "^1.13.7",
+    "@hono/zod-validator": "^0.4.2",
     "better-auth": "^1.4.19",
     "dotenv": "^16.4.5",
     "hono": "^4.12.2",
-    "mongodb": "^7.1.0"
+    "mongodb": "^7.1.0",
+    "zod": "^3.24.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.17",

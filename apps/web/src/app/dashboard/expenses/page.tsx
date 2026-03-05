@@ -14,64 +14,9 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 
-import { ExpensesTable, type Expense } from '@/components/expenses/table';
+import { ExpensesPageContent } from './expenses-content';
 
-async function getData(): Promise<Expense[]> {
-  return [
-    {
-      id: '1',
-      amount: 150.5,
-      category: 'Alimentação',
-      date: '2025-02-25',
-      description: 'Supermercado',
-      isPaid: true,
-    },
-    {
-      id: '2',
-      amount: 89.9,
-      category: 'Transporte',
-      date: '2025-02-24',
-      description: 'Combustível',
-      isPaid: false,
-    },
-    {
-      id: '3',
-      amount: 1200,
-      category: 'Moradia',
-      date: '2025-02-01',
-      description: 'Aluguel',
-      isPaid: true,
-    },
-    {
-      id: '4',
-      amount: 45,
-      category: 'Lazer',
-      date: '2025-02-23',
-      description: 'Streaming',
-      isPaid: true,
-    },
-    {
-      id: '5',
-      amount: 320,
-      category: 'Saúde',
-      date: '2025-02-20',
-      description: 'Consulta',
-      isPaid: false,
-    },
-    {
-      id: '6',
-      amount: 55.8,
-      category: 'Alimentação',
-      date: '2025-02-22',
-      description: 'Restaurante',
-      isPaid: false,
-    },
-  ];
-}
-
-export default async function ExpensesPage() {
-  const data = await getData();
-
+export default function ExpensesPage() {
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -96,9 +41,9 @@ export default async function ExpensesPage() {
             </Breadcrumb>
           </div>
         </header>
-        <div className="container mx-auto py-6">
+        <div className="container mx-auto p-4">
           <h1 className="mb-6 text-2xl font-semibold">Despesas</h1>
-          <ExpensesTable data={data} />
+          <ExpensesPageContent />
         </div>
       </SidebarInset>
     </SidebarProvider>

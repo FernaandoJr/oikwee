@@ -1,31 +1,17 @@
-'use client';
-
-import type { ColumnDef } from '@tanstack/react-table';
-import { format } from 'date-fns';
-import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
-
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+  RECURRENCE_INTERVAL_LABELS,
+  RECURRENCE_LABELS,
+} from '@/constants/expense-enums';
+import { Expense } from '@/services/expenses/types';
+import { ColumnDef } from '@tanstack/react-table';
+import { format } from 'date-fns';
+import { ArrowUpDown } from 'lucide-react';
+import { ExpenseRowActions } from '../list/row-actions';
 
-export type Expense = {
-  id: string;
-  amount: number;
-  category: string;
-  date: string;
-  description?: string;
-  isPaid: boolean;
-};
-
-export const columns: ColumnDef<Expense>[] = [
+export const expenseColumns: ColumnDef<Expense>[] = [
   {
     accessorKey: 'isPaid',
     meta: { className: 'w-16' },
@@ -39,11 +25,13 @@ export const columns: ColumnDef<Expense>[] = [
       </Button>
     ),
     cell: ({ row }) => (
-      <Switch
-        checked={row.getValue('isPaid')}
-        disabled
-        aria-label={row.getValue('isPaid') ? 'Pago' : 'Não pago'}
-      />
+      <div className="flex items-center justify-center">
+        <Checkbox
+          checked={row.getValue('isPaid')}
+          disabled
+          aria-label={row.getValue('isPaid') ? 'Pago' : 'Não pago'}
+        />
+      </div>
     ),
   },
   {
@@ -110,33 +98,36 @@ export const columns: ColumnDef<Expense>[] = [
     },
   },
   {
-    id: 'actions',
-    enableHiding: false,
+    accessorKey: 'recurrence',
+    meta: { className: 'w-24' },
+    header: 'Tipo',
     cell: ({ row }) => {
-      const expense = row.original;
+      const recurrence = row.getValue('recurrence') as number;
+      const interval = row.original.recurrenceInterval;
+      const recurrenceLabel = RECURRENCE_LABELS[recurrence] ?? '—';
+      const label =
+        recurrence === 2 && interval != null
+          ? `${recurrenceLabel} (${RECURRENCE_INTERVAL_LABELS[interval] ?? ''})`
+          : recurrenceLabel;
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon-xs">
-              <span className="sr-only">Abrir menu</span>
-              <MoreHorizontal className="size-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-40">
-            <DropdownMenuLabel>Ações</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(expense.id)}
-            >
-              Copiar ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Editar</DropdownMenuItem>
-            <DropdownMenuItem className="text-destructive">
-              Excluir
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Badge variant="outline" className="capitalize">
+          {label}
+        </Badge>
       );
     },
+  },
+  {
+    accessorKey: 'paymentMethod',
+    header: 'Pagamento',
+    cell: ({ row }) => (
+      <div className="max-w-[100px] truncate capitalize">
+        {row.getValue('paymentMethod') ?? '—'}
+      </div>
+    ),
+  },
+  {
+    id: 'actions',
+    enableHiding: false,
+    cell: ({ row }) => <ExpenseRowActions expense={row.original} />,
   },
 ];
