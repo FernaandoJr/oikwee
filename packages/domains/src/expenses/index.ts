@@ -31,7 +31,14 @@ export const createExpenseSchema = expenseSchema
 
 export const updateExpenseSchema = expenseSchema
   .omit({ id: true, createdAt: true, updatedAt: true })
-  .partial();
+  .partial()
+  .refine(
+    (data) => data.recurrence !== 2 || data.recurrenceInterval !== undefined,
+    {
+      message: 'recurrenceInterval required when recurrence is recurring',
+      path: ['recurrenceInterval'],
+    },
+  );
 
 export type Expense = z.infer<typeof expenseSchema>;
 export type CreateExpenseInput = z.infer<typeof createExpenseSchema>;
