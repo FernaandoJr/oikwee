@@ -1,5 +1,6 @@
 import { zValidator } from '@hono/zod-validator';
-import { Hono } from 'hono';
+import { Hono, type Context } from 'hono';
+import { HTTPException } from 'hono/http-exception';
 import { ObjectId } from 'mongodb';
 import type { auth } from '../auth.js';
 import { db } from '../db/mongo.js';
@@ -13,6 +14,16 @@ import { validateUser } from '../utils/validateUser.js';
 type SessionUser = (typeof auth.$Infer)['Session']['user'];
 
 const COLLECTION = 'expense';
+
+function parseExpenseId(c: Context, id: string) {
+  if (!ObjectId.isValid(id)) {
+    throw new HTTPException(400, {
+      res: c.json({ error: 'Invalid expense id' }, 400),
+    });
+  }
+
+  return new ObjectId(id);
+}
 
 const expensesRoutes = new Hono<{
   Variables: { user: SessionUser | null };
@@ -48,8 +59,9 @@ const expensesRoutes = new Hono<{
   .get('/expenses/:id', async (c) => {
     const user = validateUser(c);
     const id = c.req.param('id');
+    const expenseId = parseExpenseId(c, id);
     const doc = await db.collection(COLLECTION).findOne({
-      _id: new ObjectId(id),
+      _id: expenseId,
       userId: user.id as string,
     });
     if (!doc) return c.json({ error: 'Not found' }, 404);
@@ -62,12 +74,13 @@ const expensesRoutes = new Hono<{
     async (c) => {
       const user = validateUser(c);
       const id = c.req.param('id');
+      const expenseId = parseExpenseId(c, id);
       const body = c.req.valid('json');
       const now = new Date().toISOString();
       const result = await db
         .collection(COLLECTION)
         .findOneAndUpdate(
-          { _id: new ObjectId(id), userId: user.id },
+          { _id: expenseId, userId: user.id },
           { $set: { ...body, updatedAt: now } },
           { returnDocument: 'after' },
         );
@@ -79,8 +92,9 @@ const expensesRoutes = new Hono<{
   .delete('/expenses/:id', async (c) => {
     const user = validateUser(c);
     const id = c.req.param('id');
+    const expenseId = parseExpenseId(c, id);
     const result = await db.collection(COLLECTION).deleteOne({
-      _id: new ObjectId(id),
+      _id: expenseId,
       userId: user.id,
     });
     if (result.deletedCount === 0) return c.json({ error: 'Not found' }, 404);
