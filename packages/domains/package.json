@@ -3,8 +3,19 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "scripts": {
+    "build": "tsc"
+  },
   "exports": {
-    "./expenses": "./src/expenses/index.ts"
+    "./expenses": {
+      "types": "./dist/expenses/index.d.ts",
+      "import": "./dist/expenses/index.js",
+      "default": "./dist/expenses/index.js"
+    }
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "zod": "^4"
   },
   "peerDependencies": {
     "zod": "^4"
