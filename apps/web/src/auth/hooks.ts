@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { authService } from './service';
-import { getToken } from './storage';
+import { clearAccessToken, getToken } from './storage';
 import type { AuthSession, AuthUser, MeResponse } from './types';
 
 export function useUser(): {
@@ -16,9 +16,16 @@ export function useUser(): {
   refetch: () => void;
 } {
   const [hasToken, setHasToken] = useState(false);
+  const router = useRouter();
+  const token = getToken();
+
   useEffect(() => {
-    setHasToken(!!getToken());
-  }, []);
+    if (!token) {
+      clearAccessToken();
+      router.refresh();
+    }
+    setHasToken(!!token);
+  }, [token]);
 
   const { data, isLoading, error, refetch } = useQuery<MeResponse>({
     queryKey: ['user'],
