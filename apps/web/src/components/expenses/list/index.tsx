@@ -1,18 +1,24 @@
 'use client';
+"use no memo";
 
+import { DataTableSkeleton } from '@/components/data-table/data-table-skeleton';
 import { ExpenseTable } from './expense-table';
 import { useExpenseList } from './use-expense-list';
 
 export function ExpenseList() {
-  const { data, isLoading, deleteExpense, isDeleting } = useExpenseList();
+  const { data, pageCount, isLoading, deleteExpense, isDeleting } =
+    useExpenseList();
 
   if (isLoading) {
-    return (
-      <div className="text-muted-foreground py-8">Carregando...</div>
-    );
+    return <DataTableSkeleton columnCount={8} rowCount={10} />;
   }
 
   return (
-    <ExpenseTable data={data} onDelete={deleteExpense} isDeleting={isDeleting} />
+    <ExpenseTable
+      data={data}
+      pageCount={pageCount}
+      onDelete={deleteExpense}
+      isDeleting={isDeleting}
+    />
   );
 }
