@@ -37,7 +37,7 @@ export function ExpenseTable({
     data,
     columns,
     pageCount,
-    getRowId: (row) => row.id,
+    getRowId: (row) => row.id ?? '',
     initialState: {
       sorting: [{ id: 'date', desc: true }],
       columnPinning: { right: ['actions'] },
