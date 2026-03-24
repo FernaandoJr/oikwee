@@ -8,9 +8,9 @@ import { ExpenseRowActions } from '../list/rowActions';
 import type { Expense } from '../types';
 import {
   CATEGORIES,
+  EXPENSE_TYPE_LABELS,
   PAYMENT_METHODS,
   RECURRENCE_INTERVAL_LABELS,
-  RECURRENCE_LABELS,
 } from './enums';
 
 interface ColumnOptions {
@@ -129,17 +129,20 @@ export function expenseColumns({
       enableSorting: true,
     },
     {
-      id: 'recurrence',
-      accessorKey: 'recurrence',
+      id: 'expenseType',
+      accessorKey: 'expenseType',
       header: 'Tipo',
       cell: ({ row }) => {
-        const recurrence = row.getValue<number>('recurrence');
+        const expenseType = row.getValue<number>('expenseType');
         const interval = row.original.recurrenceInterval;
-        const recurrenceLabel = RECURRENCE_LABELS[recurrence] ?? '—';
+        const installments = row.original.installments;
+        const typeLabel = EXPENSE_TYPE_LABELS[expenseType] ?? '—';
         const label =
-          recurrence === 2 && interval != null
-            ? `${recurrenceLabel} (${RECURRENCE_INTERVAL_LABELS[interval] ?? ''})`
-            : recurrenceLabel;
+          expenseType === 3 && interval != null
+            ? `${typeLabel} (${RECURRENCE_INTERVAL_LABELS[interval] ?? ''})`
+            : expenseType === 2 && installments != null
+              ? `${typeLabel} (${installments}x)`
+              : typeLabel;
         return (
           <Badge variant="outline" className="capitalize">
             {label}

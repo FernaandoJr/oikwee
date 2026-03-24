@@ -13,15 +13,27 @@ import {
   type UpdateExpenseInput,
 } from '../types';
 
-const expenseFormSchema = createExpenseSchema.superRefine((data, ctx) => {
-  if (!data.description || data.description.trim().length === 0) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: 'Descrição é obrigatória',
-      path: ['description'],
-    });
-  }
-});
+function withExpenseFormRules<T extends z.ZodType>(schema: T) {
+  return schema.superRefine((data, ctx) => {
+    const d = data as CreateExpenseInput;
+    if (!d.description || d.description.trim().length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Descrição é obrigatória',
+        path: ['description'],
+      });
+    }
+    if (d.expenseType === 3 && d.recurrenceInterval === undefined) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Intervalo obrigatório para despesa recorrente',
+        path: ['recurrenceInterval'],
+      });
+    }
+  });
+}
+
+const expenseFormSchema = withExpenseFormRules(createExpenseSchema);
 
 export type ExpenseFormValues = CreateExpenseInput;
 
@@ -66,7 +78,9 @@ export function useExpenseHandler({ isEdit, expense }: UseExpenseHandlerProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const schema = isEdit ? updateExpenseSchema : expenseFormSchema;
+  const schema = isEdit
+    ? withExpenseFormRules(updateExpenseSchema)
+    : expenseFormSchema;
 
   const form = useForm<ExpenseFormValues>({
     resolver: zodV4Resolver(schema as z.ZodType<ExpenseFormValues>),

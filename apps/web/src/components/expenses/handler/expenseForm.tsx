@@ -29,7 +29,12 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { CalendarIcon } from 'lucide-react';
 import type { UseFormReturn } from 'react-hook-form';
-import { CATEGORIES, PAYMENT_METHODS } from '../lib/enums';
+import { useWatch } from 'react-hook-form';
+import {
+  CATEGORIES,
+  PAYMENT_METHODS,
+  RECURRENCE_INTERVAL_LABELS,
+} from '../lib/enums';
 import type { ExpenseFormValues } from './useExpenseHandler';
 
 interface ExpenseFormProps {
@@ -39,6 +44,8 @@ interface ExpenseFormProps {
 }
 
 export function ExpenseForm({ form, formId, onSubmit }: ExpenseFormProps) {
+  const expenseType = useWatch({ control: form.control, name: 'expenseType' });
+
   return (
     <Form {...form}>
       <form id={formId} onSubmit={onSubmit} className="flex flex-col gap-4 p-4">
@@ -200,6 +207,99 @@ export function ExpenseForm({ form, formId, onSubmit }: ExpenseFormProps) {
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="expenseType"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Tipo de despesa</FormLabel>
+              <Select
+                onValueChange={(v) => {
+                  const n = Number(v);
+                  field.onChange(n);
+                  if (n !== 2) form.setValue('installments', undefined);
+                  if (n !== 3) form.setValue('recurrenceInterval', undefined);
+                }}
+                value={String(field.value ?? 3)}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="1">Única</SelectItem>
+                  <SelectItem value="2">Parcelado</SelectItem>
+                  <SelectItem value="3">Recorrente</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        {expenseType === 2 ? (
+          <FormField
+            control={form.control}
+            name="installments"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Número de parcelas</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    min={1}
+                    step={1}
+                    placeholder="Ex: 12"
+                    value={field.value ?? ''}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      field.onChange(v === '' ? undefined : Number(v));
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        ) : null}
+        {expenseType === 3 ? (
+          <FormField
+            control={form.control}
+            name="recurrenceInterval"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Intervalo</FormLabel>
+                <Select
+                  onValueChange={(v) =>
+                    field.onChange(v === '' ? undefined : Number(v))
+                  }
+                  value={
+                    field.value != null ? String(field.value) : undefined
+                  }
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {(
+                      Object.entries(RECURRENCE_INTERVAL_LABELS) as [
+                        string,
+                        string,
+                      ][]
+                    ).map(([value, label]) => (
+                      <SelectItem key={value} value={value}>
+                        {label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        ) : null}
         <FormField
           control={form.control}
           name="isPaid"

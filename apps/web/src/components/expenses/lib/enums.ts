@@ -16,9 +16,10 @@ export const PAYMENT_METHODS = [
   'Boleto',
 ];
 
-export const RECURRENCE_LABELS: Record<number, string> = {
+export const EXPENSE_TYPE_LABELS: Record<number, string> = {
   1: 'Única',
-  2: 'Recorrente',
+  2: 'Parcelado',
+  3: 'Recorrente',
 };
 
 export const RECURRENCE_INTERVAL_LABELS: Record<number, string> = {
@@ -33,8 +34,12 @@ export const EXPENSE_STATUS_LABELS: Record<number, string> = {
   3: 'Cancelado',
 };
 
+export function getExpenseTypeLabel(n: number): string {
+  return EXPENSE_TYPE_LABELS[n] ?? '—';
+}
+
 export function getRecurrenceLabel(n: number): string {
-  return RECURRENCE_LABELS[n] ?? '—';
+  return getExpenseTypeLabel(n);
 }
 
 export function getRecurrenceIntervalLabel(n: number): string {
