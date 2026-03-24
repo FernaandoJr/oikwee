@@ -1,4 +1,4 @@
-import { QueryProvider } from '@/components/providers/query-provider';
+import { QueryProvider } from '@/components/providers/queryProvider';
 import { Toaster } from '@/components/ui/sonner';
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import type { Metadata } from 'next';

@@ -1,7 +1,7 @@
 'use client';
 
 import { ExpenseHandler } from '@/components/expenses/handler';
-import { expensesQueryKeys } from '@/components/expenses/lib/query-keys';
+import { expensesQueryKeys } from '@/components/expenses/lib/queryKeys';
 import { expensesService } from '@/components/expenses/services';
 import { useQuery } from '@tanstack/react-query';
 import { use } from 'react';

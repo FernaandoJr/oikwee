@@ -7,11 +7,13 @@ export const expenseSchema = z.object({
   date: z.string().min(1),
   description: z.string().optional(),
   isPaid: z.boolean().default(false),
-  recurrence: z.union([z.literal(1), z.literal(2)]).default(1),
+  expenseType: z.union([z.literal(1), z.literal(2), z.literal(3)]).default(3),
   recurrenceInterval: z
     .union([z.literal(1), z.literal(2), z.literal(3)])
     .optional(),
   recurrenceGroupId: z.string().optional(),
+  installments: z.number().int().min(1).optional(),
+  parentId: z.string().optional(),
   paymentMethod: z.string().optional(),
   dueDate: z.string().optional(),
   status: z.union([z.literal(1), z.literal(2), z.literal(3)]).default(2),
@@ -22,10 +24,10 @@ export const expenseSchema = z.object({
 export const createExpenseSchema = expenseSchema
   .omit({ id: true, createdAt: true, updatedAt: true })
   .refine(
-    (data) => data.recurrence !== 2 || data.recurrenceInterval !== undefined,
+    (data) => data.expenseType !== 2 || data.installments !== undefined,
     {
-      message: 'recurrenceInterval required when recurrence is recurring',
-      path: ['recurrenceInterval'],
+      message: 'Número de parcelas obrigatório',
+      path: ['installments'],
     },
   );
 
@@ -33,10 +35,10 @@ export const updateExpenseSchema = expenseSchema
   .omit({ id: true, createdAt: true, updatedAt: true })
   .partial()
   .refine(
-    (data) => data.recurrence !== 2 || data.recurrenceInterval !== undefined,
+    (data) => data.expenseType !== 2 || data.installments !== undefined,
     {
-      message: 'recurrenceInterval required when recurrence is recurring',
-      path: ['recurrenceInterval'],
+      message: 'Número de parcelas obrigatório',
+      path: ['installments'],
     },
   );
 

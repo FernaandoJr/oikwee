@@ -8,7 +8,7 @@ import {
   getStrengthColor,
   getStrengthScore,
   getStrengthTextKey,
-} from './password-strength';
+} from './passwordStrength';
 
 interface PasswordStrengthIndicatorProps {
   password: string;

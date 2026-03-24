@@ -1,5 +1,5 @@
 import type { AxiosInstance } from 'axios';
-import { authApiClient } from './api-client';
+import { authApiClient } from './apiClient';
 import { clearAccessToken, setAccessToken } from './storage';
 import type { MeResponse, SignInResult } from './types';
 

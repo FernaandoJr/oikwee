@@ -1,7 +1,7 @@
 'use client';
 
 import { heroImageSrc } from '@/auth';
-import { SignUpForm } from '@/components/auth/sign-up-form';
+import { SignUpForm } from '@/components/auth/signUpForm';
 import { Header } from '@/components/header';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ImageDithering } from '@paper-design/shaders-react';

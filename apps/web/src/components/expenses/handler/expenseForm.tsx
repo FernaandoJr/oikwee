@@ -29,13 +29,8 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { CalendarIcon } from 'lucide-react';
 import type { UseFormReturn } from 'react-hook-form';
-import {
-  CATEGORIES,
-  PAYMENT_METHODS,
-  RECURRENCE_INTERVAL_LABELS,
-  RECURRENCE_LABELS,
-} from '../lib/enums';
-import type { ExpenseFormValues } from './use-expense-handler';
+import { CATEGORIES, PAYMENT_METHODS } from '../lib/enums';
+import type { ExpenseFormValues } from './useExpenseHandler';
 
 interface ExpenseFormProps {
   form: UseFormReturn<ExpenseFormValues>;
@@ -44,15 +39,9 @@ interface ExpenseFormProps {
 }
 
 export function ExpenseForm({ form, formId, onSubmit }: ExpenseFormProps) {
-  const recurrence = form.watch('recurrence');
-
   return (
     <Form {...form}>
-      <form
-        id={formId}
-        onSubmit={onSubmit}
-        className="flex flex-col gap-4 p-4"
-      >
+      <form id={formId} onSubmit={onSubmit} className="flex flex-col gap-4 p-4">
         <FormField
           control={form.control}
           name="description"
@@ -133,9 +122,13 @@ export function ExpenseForm({ form, formId, onSubmit }: ExpenseFormProps) {
                     >
                       <CalendarIcon className="mr-2 size-4" />
                       {field.value
-                        ? format(new Date(field.value + 'T12:00:00'), 'dd/MM/yyyy', {
-                            locale: ptBR,
-                          })
+                        ? format(
+                            new Date(field.value + 'T12:00:00'),
+                            'dd/MM/yyyy',
+                            {
+                              locale: ptBR,
+                            },
+                          )
                         : 'Selecione a data'}
                     </Button>
                   </FormControl>
@@ -177,9 +170,13 @@ export function ExpenseForm({ form, formId, onSubmit }: ExpenseFormProps) {
                     >
                       <CalendarIcon className="mr-2 size-4" />
                       {field.value
-                        ? format(new Date(field.value + 'T12:00:00'), 'dd/MM/yyyy', {
-                            locale: ptBR,
-                          })
+                        ? format(
+                            new Date(field.value + 'T12:00:00'),
+                            'dd/MM/yyyy',
+                            {
+                              locale: ptBR,
+                            },
+                          )
                         : 'Opcional'}
                     </Button>
                   </FormControl>
@@ -188,7 +185,9 @@ export function ExpenseForm({ form, formId, onSubmit }: ExpenseFormProps) {
                   <Calendar
                     mode="single"
                     selected={
-                      field.value ? new Date(field.value + 'T12:00:00') : undefined
+                      field.value
+                        ? new Date(field.value + 'T12:00:00')
+                        : undefined
                     }
                     onSelect={(date) =>
                       field.onChange(date ? format(date, 'yyyy-MM-dd') : '')
@@ -217,78 +216,14 @@ export function ExpenseForm({ form, formId, onSubmit }: ExpenseFormProps) {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="recurrence"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Tipo</FormLabel>
-              <Select
-                onValueChange={(v) => {
-                  const n = Number(v) as 1 | 2;
-                  field.onChange(n);
-                  if (n === 1) form.setValue('recurrenceInterval', undefined);
-                }}
-                value={String(field.value ?? 1)}
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {Object.entries(RECURRENCE_LABELS).map(([value, label]) => (
-                    <SelectItem key={value} value={value}>
-                      {label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        {recurrence === 2 && (
-          <FormField
-            control={form.control}
-            name="recurrenceInterval"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Periodicidade</FormLabel>
-                <Select
-                  onValueChange={(v) => field.onChange(Number(v) as 1 | 2 | 3)}
-                  value={String(field.value ?? '')}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {Object.entries(RECURRENCE_INTERVAL_LABELS).map(
-                      ([value, label]) => (
-                        <SelectItem key={value} value={value}>
-                          {label}
-                        </SelectItem>
-                      ),
-                    )}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        )}
+
         <FormField
           control={form.control}
           name="paymentMethod"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Forma de pagamento (opcional)</FormLabel>
-              <Select
-                onValueChange={field.onChange}
-                value={field.value ?? ''}
-              >
+              <Select onValueChange={field.onChange} value={field.value ?? ''}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Opcional" />

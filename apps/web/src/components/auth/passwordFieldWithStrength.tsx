@@ -1,7 +1,7 @@
 'use client';
 
-import { PasswordInput } from '@/components/auth/password-input';
-import { PasswordStrengthIndicator } from '@/components/auth/password-strength-indicator';
+import { PasswordInput } from '@/components/auth/passwordInput';
+import { PasswordStrengthIndicator } from '@/components/auth/passwordStrengthIndicator';
 import {
   FormControl,
   FormField,

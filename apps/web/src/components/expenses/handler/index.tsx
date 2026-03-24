@@ -11,8 +11,8 @@ import {
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 import type { Expense } from '../types';
-import { ExpenseForm } from './expense-form';
-import { useExpenseHandler } from './use-expense-handler';
+import { ExpenseForm } from './expenseForm';
+import { useExpenseHandler } from './useExpenseHandler';
 
 const EXPENSE_FORM_ID = 'expense-form';
 

@@ -2,8 +2,8 @@
 "use no memo";
 
 import { DataTableSkeleton } from '@/components/data-table/data-table-skeleton';
-import { ExpenseTable } from './expense-table';
-import { useExpenseList } from './use-expense-list';
+import { ExpenseTable } from './expenseTable';
+import { useExpenseList } from './useExpenseList';
 
 export function ExpenseList() {
   const { data, pageCount, isLoading, deleteExpense, isDeleting } =

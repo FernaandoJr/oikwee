@@ -16,10 +16,10 @@ import {
   MenuSearch,
   type MenuActionItem,
   type MenuOptionItem,
-} from '@/components/sidebar/menu-search';
-import { NavMain } from '@/components/sidebar/nav-main';
-import { NavSecondary } from '@/components/sidebar/nav-secondary';
-import { NavUser } from '@/components/sidebar/nav-user';
+} from '@/components/sidebar/menuSearch';
+import { NavMain } from '@/components/sidebar/navMain';
+import { NavSecondary } from '@/components/sidebar/navSecondary';
+import { NavUser } from '@/components/sidebar/navUser';
 import {
   Sidebar,
   SidebarContent,

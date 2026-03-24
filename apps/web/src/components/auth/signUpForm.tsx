@@ -1,8 +1,9 @@
 'use client';
 
-import { authClient, getOAuthRedirectUrl, useSignIn } from '@/auth';
-import { PasswordInput } from '@/components/auth/password-input';
-import { SocialLogo } from '@/components/auth/social-logo';
+import { authClient, getOAuthRedirectUrl, useSignUp } from '@/auth';
+import { PasswordFieldWithStrength } from '@/components/auth/passwordFieldWithStrength';
+import { isStrongPassword } from '@/components/auth/passwordStrength';
+import { SocialLogo } from '@/components/auth/socialLogo';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -23,42 +24,63 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import Loader from '../loader';
+import { PasswordInput } from './passwordInput';
 
-interface SignInFormValues {
+interface SignUpFormValues {
+  name: string;
   email: string;
   password: string;
+  confirmPassword: string;
 }
 
-export function SignInForm() {
+interface SignUpFormProps {
+  handleSignIn?: () => void;
+}
+
+export function SignUpForm({ handleSignIn }: SignUpFormProps) {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [githubLoading, setGithubLoading] = useState(false);
   const [discordLoading, setDiscordLoading] = useState(false);
 
   const { t } = useTranslation();
-  const { mutate: signIn, isPending: isSubmitting } = useSignIn();
+  const { mutate: signUp, isPending: isSubmitting } = useSignUp();
   const router = useRouter();
 
-  const signInSchema = useMemo(
+  const signUpSchema = useMemo(
     () =>
-      z.object({
-        email: z
-          .email(t('validationEmailInvalid'))
-          .min(1, t('validationEmailRequired')),
-        password: z.string().min(6, t('validationPasswordMin')),
-      }),
+      z
+        .object({
+          name: z.string().min(3, t('validationNameRequired')),
+          email: z
+            .email(t('validationEmailInvalid'))
+            .min(1, t('validationEmailRequired')),
+          password: z.string().min(1, t('validationPasswordMin')),
+          confirmPassword: z.string().min(1, t('validationPasswordMin')),
+        })
+        .refine((data) => isStrongPassword(data.password), {
+          message: t('validationPasswordStrong'),
+          path: ['password'],
+        })
+        .refine((data) => data.password === data.confirmPassword, {
+          message: t('validationPasswordMatch'),
+          path: ['confirmPassword'],
+        }),
     [t],
   );
 
-  const form = useForm<SignInFormValues>({
-    resolver: zodResolver(signInSchema),
+  const form = useForm<SignUpFormValues>({
+    resolver: zodResolver(signUpSchema),
     defaultValues: {
+      name: '',
       email: '',
       password: '',
+      confirmPassword: '',
     },
   });
 
-  const handleSignIn = (values: SignInFormValues) => {
-    signIn({
+  const onSubmit = (values: SignUpFormValues) => {
+    signUp({
+      name: values.name,
       email: values.email,
       password: values.password,
     });
@@ -106,27 +128,36 @@ export function SignInForm() {
     if (data?.url) window.location.href = data.url;
   };
 
-  const handleResetPassword = () => {
-    // TODO: Implement reset password
-  };
-
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-2">
       <h1 className="animate-element animate-delay-100 text-4xl leading-tight font-semibold md:text-5xl">
         <span className="text-foreground font-light tracking-tighter">
           {t('welcome')}
         </span>
       </h1>
-      <p className="animate-element animate-delay-200 text-muted-foreground">
-        {t('accessYourAccountAndContinue')}
-      </p>
 
       <Form {...form}>
-        <form
-          className="space-y-2"
-          onSubmit={form.handleSubmit(handleSignIn)}
-          autoComplete="off"
-        >
+        <form className="space-y-2" onSubmit={form.handleSubmit(onSubmit)}>
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem className="animate-element animate-delay-200">
+                <FormLabel className="text-muted-foreground text-sm font-medium">
+                  {t('name')}
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder={t('enterYourName')}
+                    className="w-full p-4 text-sm shadow-none"
+                    autoComplete="name"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="email"
@@ -156,10 +187,8 @@ export function SignInForm() {
                   {t('password')}
                 </FormLabel>
                 <FormControl>
-                  <PasswordInput
-                    value={field.value}
-                    onChange={field.onChange}
-                    onBlur={field.onBlur}
+                  <PasswordFieldWithStrength
+                    field={field}
                     placeholder={t('enterYourPassword')}
                   />
                 </FormControl>
@@ -168,30 +197,41 @@ export function SignInForm() {
             )}
           />
 
-          <div className="animate-element animate-delay-500 flex justify-end text-sm">
-            <Link
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                handleResetPassword();
-              }}
-              className="text-primary transition-colors select-none hover:underline"
-            >
-              {t('resetPassword')}
-            </Link>
-          </div>
+          <FormField
+            control={form.control}
+            name="confirmPassword"
+            render={({ field }) => (
+              <FormItem className="animate-element animate-delay-500">
+                <FormLabel className="text-muted-foreground text-sm font-medium">
+                  {t('confirmPassword')}
+                </FormLabel>
+                <FormControl>
+                  <PasswordInput
+                    value={field.value}
+                    onChange={field.onChange}
+                    onBlur={field.onBlur}
+                    placeholder={t('enterYourPassword')}
+                    autoComplete="new-password"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           <Button
             type="submit"
             className="animate-element animate-delay-600 w-full py-4 select-none"
             disabled={isSubmitting}
           >
-            {isSubmitting ? (t('signingIn') ?? 'Signing in...') : t('signIn')}
+            {isSubmitting
+              ? (t('signingIn') ?? 'Signing in...')
+              : t('createAccount')}
           </Button>
         </form>
       </Form>
 
-      <div className="animate-element animate-delay-700 relative flex items-center justify-center select-none">
+      <div className="animate-element animate-delay-700 relative flex items-center justify-center py-4 select-none">
         <span className="border-border w-full border-t" />
         <span className="text-muted-foreground bg-background absolute px-4 text-sm">
           {t('orContinueWith')}
@@ -244,16 +284,16 @@ export function SignInForm() {
       </div>
 
       <p className="animate-element animate-delay-900 text-muted-foreground flex justify-center gap-2 text-center text-sm select-none">
-        {t('newToOurPlatform')}
+        {t('alreadyHaveAccount')}
         <Link
           href="#"
           onClick={(e) => {
             e.preventDefault();
-            router.push('/auth/sign-up');
+            router.push('/auth/sign-in');
           }}
           className="text-primary transition-colors hover:underline"
         >
-          {t('createAccount')}
+          {t('signIn')}
         </Link>
       </p>
     </div>

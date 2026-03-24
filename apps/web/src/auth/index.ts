@@ -1,6 +1,6 @@
 export { getApiBaseUrl, getApiV1Url, getAuthBaseUrl, getOAuthRedirectUrl, getWebAppUrl } from './config';
 export { authClient } from './client';
-export { authApiClient } from './api-client';
+export { authApiClient } from './apiClient';
 export { authService, AuthService } from './service';
 export {
   getToken,

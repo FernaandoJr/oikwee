@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { expensesQueryKeys } from '../lib/query-keys';
+import { expensesQueryKeys } from '../lib/queryKeys';
 import { zodV4Resolver } from '../lib/resolver';
 import { expensesService } from '../services';
 import {
@@ -32,8 +32,10 @@ const defaultFormValues: ExpenseFormValues = {
   date: '',
   dueDate: '',
   isPaid: false,
-  recurrence: 1,
+  expenseType: 3,
   recurrenceInterval: undefined,
+  installments: undefined,
+  parentId: undefined,
   paymentMethod: '',
   status: 2,
 };
@@ -46,8 +48,10 @@ function expenseToFormValues(expense: Expense): ExpenseFormValues {
     date: expense.date,
     dueDate: expense.dueDate ?? '',
     isPaid: expense.isPaid,
-    recurrence: expense.recurrence,
+    expenseType: expense.expenseType ?? 3,
     recurrenceInterval: expense.recurrenceInterval,
+    installments: expense.installments,
+    parentId: expense.parentId,
     paymentMethod: expense.paymentMethod ?? '',
     status: expense.status ?? 2,
   };

@@ -1,10 +1,10 @@
 import type { Column } from "@tanstack/react-table";
-import { dataTableConfig } from "@/config/data-table";
+import { dataTableConfig } from "@/config/dataTable";
 import type {
   ExtendedColumnFilter,
   FilterOperator,
   FilterVariant,
-} from "@/types/data-table";
+} from "@/types/dataTable";
 
 export function getColumnPinningStyle<TData>({
   column,

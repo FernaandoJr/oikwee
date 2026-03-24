@@ -1,5 +1,5 @@
 'use client';
-import { BentoGrid } from '@/components/bento-grid';
+import { BentoGrid } from '@/components/bentoGrid';
 import { Header } from '@/components/header';
 import { AboutSection } from '@/components/sections/about';
 import { HeroSection } from '@/components/sections/hero';

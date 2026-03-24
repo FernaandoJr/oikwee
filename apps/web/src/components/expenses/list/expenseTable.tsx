@@ -6,7 +6,7 @@ import { DataTableAdvancedToolbar } from '@/components/data-table/data-table-adv
 import { DataTableFilterList } from '@/components/data-table/data-table-filter-list';
 import { DataTableSortList } from '@/components/data-table/data-table-sort-list';
 import { Button } from '@/components/ui/button';
-import { useDataTable } from '@/hooks/use-data-table';
+import { useDataTable } from '@/hooks/useDataTable';
 import { Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import * as React from 'react';
@@ -37,7 +37,7 @@ export function ExpenseTable({
     data,
     columns,
     pageCount,
-    getRowId: (row) => row.id,
+    getRowId: (row) => row.id ?? '',
     initialState: {
       sorting: [{ id: 'date', desc: true }],
       columnPinning: { right: ['actions'] },

@@ -4,7 +4,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import type { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import { CalendarIcon, DollarSign, Tag, Text } from 'lucide-react';
-import { ExpenseRowActions } from '../list/row-actions';
+import { ExpenseRowActions } from '../list/rowActions';
 import type { Expense } from '../types';
 import {
   CATEGORIES,

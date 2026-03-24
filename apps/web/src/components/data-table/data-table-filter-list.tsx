@@ -56,9 +56,9 @@ import {
   SortableItemHandle,
   SortableOverlay,
 } from "@/components/ui/sortable";
-import { dataTableConfig } from "@/config/data-table";
-import { useDebouncedCallback } from "@/hooks/use-debounced-callback";
-import { getDefaultFilterOperator, getFilterOperators } from "@/lib/data-table";
+import { dataTableConfig } from "@/config/dataTable";
+import { useDebouncedCallback } from "@/hooks/useDebouncedCallback";
+import { getDefaultFilterOperator, getFilterOperators } from "@/lib/dataTable";
 import { formatDate } from "@/lib/format";
 import { generateId } from "@/lib/id";
 import { getFiltersStateParser } from "@/lib/parsers";
@@ -67,7 +67,7 @@ import type {
   ExtendedColumnFilter,
   FilterOperator,
   JoinOperator,
-} from "@/types/data-table";
+} from "@/types/dataTable";
 
 const DEBOUNCE_MS = 300;
 const THROTTLE_MS = 50;

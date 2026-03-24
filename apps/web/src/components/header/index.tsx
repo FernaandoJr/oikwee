@@ -1,16 +1,16 @@
 'use client';
 import { useUser } from '@/auth';
-import { MenuToggleIcon } from '@/components/header/menu-toggle-icon';
+import { MenuToggleIcon } from '@/components/header/menuToggleIcon';
 import { Button, buttonVariants } from '@/components/ui/button';
-import { headerLinks } from '@/constants/header-links';
+import { headerLinks } from '@/constants/headerLinks';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@repo/i18n';
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ModeToggle } from '../dark-mode';
-import { useScroll } from '../sidebar/use-scroll';
+import { ModeToggle } from '../darkMode';
+import { useScroll } from '../sidebar/useScroll';
 
 interface HeaderProps {
   disableSticky?: boolean;

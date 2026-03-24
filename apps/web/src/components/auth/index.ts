@@ -1,9 +1,9 @@
 export {
   PasswordFieldWithStrength,
   PasswordWithConfirmFields,
-} from './password-field-with-strength';
-export { PasswordInput } from './password-input';
-export { PasswordStrengthIndicator } from './password-strength-indicator';
-export { SignInForm } from './sign-in-form';
-export { SignUpForm } from './sign-up-form';
-export { SocialLogo } from './social-logo';
+} from './passwordFieldWithStrength';
+export { PasswordInput } from './passwordInput';
+export { PasswordStrengthIndicator } from './passwordStrengthIndicator';
+export { SignInForm } from './signInForm';
+export { SignUpForm } from './signUpForm';
+export { SocialLogo } from './socialLogo';

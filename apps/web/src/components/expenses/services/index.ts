@@ -1,5 +1,5 @@
 import { apiClient } from '@/services/api';
-import { HttpClient } from '@/services/http-client';
+import { HttpClient } from '@/services/httpClient';
 import type {
   Expense,
   CreateExpenseInput,

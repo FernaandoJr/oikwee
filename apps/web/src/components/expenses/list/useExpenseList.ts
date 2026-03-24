@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { parseAsInteger, useQueryState } from 'nuqs';
 import { toast } from 'sonner';
-import { expensesQueryKeys } from '../lib/query-keys';
+import { expensesQueryKeys } from '../lib/queryKeys';
 import { expensesService } from '../services';
 import type { Expense } from '../types';
 
