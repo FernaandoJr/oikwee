@@ -2,29 +2,13 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { PatchDiff, PayloadBuilder } from '@/lib/payload';
-import { zodV4Resolver } from '../lib/resolver';
 import { expensesService } from '../services';
-import {
-  createExpenseSchema,
-  updateExpenseSchema,
-  type IExpenseComplete,
-} from '../types';
+import { expenseFormSchema } from '../schema';
+import { type IExpenseComplete } from '../types';
 
-const expenseFormSchema = createExpenseSchema.superRefine((data, ctx) => {
-  if (!data.name || data.name.trim().length === 0) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: 'Nome é obrigatório',
-      path: ['name'],
-    });
-  }
-});
-
-export type ExpenseFormValues = z.infer<typeof expenseFormSchema>;
-
-const defaultFormValues: Partial<ExpenseFormValues> = {
+const defaultFormValues: Partial<IExpenseComplete> = {
   name: '',
   amount: 0,
   category: undefined,
@@ -40,26 +24,6 @@ const defaultFormValues: Partial<ExpenseFormValues> = {
   notes: '',
 };
 
-function expenseToFormValues(
-  expense: IExpenseComplete,
-): Partial<ExpenseFormValues> {
-  return {
-    name: expense.name,
-    amount: expense.amount,
-    category: expense.category,
-    type: expense.type,
-    recurrenceInterval: expense.recurrenceInterval,
-    status: expense.status,
-    startDate: expense.startDate,
-    installmentsTotal: expense.installmentsTotal,
-    isPaid: expense.isPaid,
-    dueDay: expense.dueDay,
-    creditCardId: expense.creditCardId,
-    paymentMethod: expense.paymentMethod,
-    notes: expense.notes ?? '',
-  };
-}
-
 interface UseExpenseHandlerProps {
   isEdit: boolean;
   expense?: IExpenseComplete;
@@ -69,12 +33,9 @@ export function useExpenseHandler({ isEdit, expense }: UseExpenseHandlerProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const schema = isEdit ? updateExpenseSchema : expenseFormSchema;
-
-  const form = useForm<ExpenseFormValues>({
-    resolver: zodV4Resolver(schema as z.ZodType<ExpenseFormValues>),
-    defaultValues:
-      isEdit && expense ? expenseToFormValues(expense) : defaultFormValues,
+  const form = useForm<Partial<IExpenseComplete>>({
+    resolver: zodResolver(expenseFormSchema),
+    defaultValues: isEdit && expense ? expense : defaultFormValues,
   });
 
   const createMutation = useMutation({
@@ -116,7 +77,7 @@ export function useExpenseHandler({ isEdit, expense }: UseExpenseHandlerProps) {
       if (isEdit && expense?.id) {
         updateMutation.mutate({ id: expense.id, values });
       } else {
-        createMutation.mutate(values as Partial<IExpenseComplete>);
+        createMutation.mutate(values);
       }
     },
     () => {

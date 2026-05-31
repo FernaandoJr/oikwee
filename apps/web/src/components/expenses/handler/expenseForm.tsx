@@ -10,28 +10,21 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { Combobox } from '@/components/blocks/combobox';
 import { Input } from '@/components/ui/input';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { cn } from '@/lib/utils';
-import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { CalendarIcon } from 'lucide-react';
+import { CalendarIcon, DollarSign } from 'lucide-react';
 import { useTranslation } from '@repo/i18n';
 import type { UseFormReturn } from 'react-hook-form';
-import { cardsQueryKeys, cardsService } from '../../cards/services';
+import { cardsService } from '../../cards/services';
 import {
   CATEGORIES,
   EXPENSE_STATUSES,
@@ -41,11 +34,11 @@ import {
   PAYMENT_METHODS,
   RECURRENCE_INTERVALS,
   RECURRENCE_INTERVAL_LABELS,
+  type IExpenseComplete,
 } from '../types';
-import type { ExpenseFormValues } from './useExpenseHandler';
 
 interface ExpenseFormProps {
-  form: UseFormReturn<ExpenseFormValues>;
+  form: UseFormReturn<Partial<IExpenseComplete>>;
   formId: string;
   onSubmit: (e?: React.BaseSyntheticEvent) => Promise<void>;
   isEdit?: boolean;
@@ -55,14 +48,15 @@ export function ExpenseForm({ form, formId, onSubmit, isEdit }: ExpenseFormProps
   const { t } = useTranslation();
   const type = form.watch('type');
 
-  const { data: cards = [] } = useQuery({
-    queryKey: cardsQueryKeys.list(),
-    queryFn: () => cardsService.get(),
-  });
+  const typeOptions = EXPENSE_TYPES.map((v) => ({ value: v, label: EXPENSE_TYPE_LABELS[v] }));
+  const categoryOptions = CATEGORIES.map((v) => ({ value: v, label: v }));
+  const recurrenceOptions = RECURRENCE_INTERVALS.map((v) => ({ value: v, label: RECURRENCE_INTERVAL_LABELS[v] }));
+  const paymentOptions = PAYMENT_METHODS.map((v) => ({ value: v, label: v }));
+  const statusOptions = EXPENSE_STATUSES.map((v) => ({ value: v, label: EXPENSE_STATUS_LABELS[v] }));
 
   return (
     <Form {...form}>
-      <form id={formId} onSubmit={onSubmit} className="flex flex-col gap-4 p-4">
+      <form id={formId} onSubmit={onSubmit} className="flex w-full flex-col gap-4 p-4">
         <FormField
           control={form.control}
           name="name"
@@ -83,20 +77,15 @@ export function ExpenseForm({ form, formId, onSubmit, isEdit }: ExpenseFormProps
           render={({ field }) => (
             <FormItem>
               <FormLabel>{t('type')}</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value ?? ''}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t('select')} />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {EXPENSE_TYPES.map((t) => (
-                    <SelectItem key={t} value={t}>
-                      {EXPENSE_TYPE_LABELS[t]}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <FormControl>
+                <Combobox
+                  options={typeOptions}
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  placeholder={t('select')}
+                  searchPlaceholder={t('search')}
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
@@ -109,15 +98,23 @@ export function ExpenseForm({ form, formId, onSubmit, isEdit }: ExpenseFormProps
             <FormItem>
               <FormLabel>{t('amountLabel')}</FormLabel>
               <FormControl>
-                <Input
-                  type="number"
-                  step={0.01}
-                  min={0}
-                  placeholder="0,00"
-                  {...field}
-                  value={field.value ?? ''}
-                  onChange={(e) => field.onChange(Number(e.target.value))}
-                />
+                <div className="relative">
+                  <DollarSign className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    className="bg-background pl-9"
+                    type="number"
+                    step={0.01}
+                    min={0}
+                    placeholder="0,00"
+                    {...field}
+                    value={field.value === 0 || field.value == null ? '' : field.value}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === '') { field.onChange(undefined); return; }
+                      if (/^\d*\.?\d{0,2}$/.test(val)) field.onChange(Number(val));
+                    }}
+                  />
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -130,20 +127,15 @@ export function ExpenseForm({ form, formId, onSubmit, isEdit }: ExpenseFormProps
           render={({ field }) => (
             <FormItem>
               <FormLabel>{t('category')}</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value ?? ''}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t('select')} />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {CATEGORIES.map((c) => (
-                    <SelectItem key={c} value={c}>
-                      {c}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <FormControl>
+                <Combobox
+                  options={categoryOptions}
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  placeholder={t('select')}
+                  searchPlaceholder={t('search')}
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
@@ -156,20 +148,15 @@ export function ExpenseForm({ form, formId, onSubmit, isEdit }: ExpenseFormProps
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t('recurrenceInterval')}</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value ?? ''}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder={t('select')} />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {RECURRENCE_INTERVALS.map((r) => (
-                      <SelectItem key={r} value={r}>
-                        {RECURRENCE_INTERVAL_LABELS[r]}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <FormControl>
+                  <Combobox
+                    options={recurrenceOptions}
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    placeholder={t('select')}
+                    searchPlaceholder={t('search')}
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -222,7 +209,7 @@ export function ExpenseForm({ form, formId, onSubmit, isEdit }: ExpenseFormProps
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+                <PopoverContent className="w-full p-0" align="start">
                   <Calendar
                     mode="single"
                     selected={field.value ? new Date(field.value + 'T12:00:00') : undefined}
@@ -264,24 +251,18 @@ export function ExpenseForm({ form, formId, onSubmit, isEdit }: ExpenseFormProps
           render={({ field }) => (
             <FormItem>
               <FormLabel>{t('cardOptional')}</FormLabel>
-              <Select
-                onValueChange={(v) => field.onChange(v === '__none__' ? undefined : v)}
-                value={field.value ?? '__none__'}
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t('none')} />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="__none__">{t('none')}</SelectItem>
-                  {cards.map((card) => (
-                    <SelectItem key={card.id} value={card.id!}>
-                      {card.name} — {card.bank}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <FormControl>
+                <Combobox
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  placeholder={t('none')}
+                  searchPlaceholder={t('search')}
+                  remote={{
+                    queryFn: () => cardsService.get(),
+                    mapOption: (card) => ({ value: card.id!, label: `${card.name} — ${card.bank}` }),
+                  }}
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
@@ -293,20 +274,15 @@ export function ExpenseForm({ form, formId, onSubmit, isEdit }: ExpenseFormProps
           render={({ field }) => (
             <FormItem>
               <FormLabel>{t('paymentMethodOptional')}</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value ?? ''}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t('optional')} />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {PAYMENT_METHODS.map((m) => (
-                    <SelectItem key={m} value={m}>
-                      {m}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <FormControl>
+                <Combobox
+                  options={paymentOptions}
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  placeholder={t('optional')}
+                  searchPlaceholder={t('search')}
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
@@ -336,20 +312,15 @@ export function ExpenseForm({ form, formId, onSubmit, isEdit }: ExpenseFormProps
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t('status')}</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value ?? 'active'}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder={t('status')} />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {EXPENSE_STATUSES.map((s) => (
-                      <SelectItem key={s} value={s}>
-                        {EXPENSE_STATUS_LABELS[s]}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <FormControl>
+                  <Combobox
+                    options={statusOptions}
+                    value={field.value ?? 'active'}
+                    onValueChange={field.onChange}
+                    placeholder={t('status')}
+                    searchPlaceholder={t('search')}
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}

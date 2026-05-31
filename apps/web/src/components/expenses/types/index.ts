@@ -16,8 +16,6 @@ export type {
 
 export {
   expenseSchema,
-  createExpenseSchema,
-  updateExpenseSchema,
   CATEGORIES,
   PAYMENT_METHODS,
   EXPENSE_TYPES,

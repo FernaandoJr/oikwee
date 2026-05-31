@@ -1,20 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { zodV4Resolver } from '@/components/expenses/lib/resolver';
-import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { cardFormSchema } from '../schema';
 import { cardsQueryKeys, cardsService } from '../services';
-import {
-  createCardSchema,
-  updateCardSchema,
-  type CreateCardInput,
-  type CreditCard,
-  type UpdateCardInput,
-} from '../types';
+import { type CreditCard } from '../types';
 
-export type CardFormValues = z.infer<typeof createCardSchema>;
-
-const defaultFormValues: Partial<CardFormValues> = {
+const defaultFormValues: Partial<CreditCard> = {
   name: '',
   bank: '',
   description: '',
@@ -22,17 +14,6 @@ const defaultFormValues: Partial<CardFormValues> = {
   dueDay: undefined,
   status: 'active',
 };
-
-function cardToFormValues(card: CreditCard): Partial<CardFormValues> {
-  return {
-    name: card.name,
-    bank: card.bank,
-    description: card.description ?? '',
-    closingDay: card.closingDay,
-    dueDay: card.dueDay,
-    status: card.status,
-  };
-}
 
 interface UseCardHandlerProps {
   isEdit: boolean;
@@ -43,15 +24,14 @@ export function useCardHandler({ isEdit, card }: UseCardHandlerProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const schema = isEdit ? updateCardSchema : createCardSchema;
-
-  const form = useForm<CardFormValues>({
-    resolver: zodV4Resolver(schema as z.ZodType<CardFormValues>),
-    defaultValues: isEdit && card ? cardToFormValues(card) : defaultFormValues,
+  const form = useForm<Partial<CreditCard>>({
+    resolver: zodResolver(cardFormSchema),
+    defaultValues: isEdit && card ? card : defaultFormValues,
   });
 
   const createMutation = useMutation({
-    mutationFn: (values: CreateCardInput) => cardsService.create(values),
+    mutationFn: (values: Partial<CreditCard>) =>
+      cardsService.create(values as CreditCard),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: cardsQueryKeys.list() });
       router.back();
@@ -59,7 +39,7 @@ export function useCardHandler({ isEdit, card }: UseCardHandlerProps) {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, values }: { id: string; values: UpdateCardInput }) =>
+    mutationFn: ({ id, values }: { id: string; values: Partial<CreditCard> }) =>
       cardsService.patch(id, values),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: cardsQueryKeys.list() });
@@ -71,7 +51,7 @@ export function useCardHandler({ isEdit, card }: UseCardHandlerProps) {
     if (isEdit && card?.id) {
       updateMutation.mutate({ id: card.id, values });
     } else {
-      createMutation.mutate(values as CreateCardInput);
+      createMutation.mutate(values);
     }
   });
 

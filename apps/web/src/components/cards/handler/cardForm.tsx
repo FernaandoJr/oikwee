@@ -18,11 +18,10 @@ import {
 } from '@/components/ui/select';
 import { useTranslation } from '@repo/i18n';
 import type { UseFormReturn } from 'react-hook-form';
-import { CARD_STATUSES, CARD_STATUS_LABELS } from '../types';
-import type { CardFormValues } from './useCardHandler';
+import { CARD_STATUSES, CARD_STATUS_LABELS, type CreditCard } from '../types';
 
 interface CardFormProps {
-  form: UseFormReturn<CardFormValues>;
+  form: UseFormReturn<Partial<CreditCard>>;
   formId: string;
   onSubmit: (e?: React.BaseSyntheticEvent) => Promise<void>;
   isEdit?: boolean;

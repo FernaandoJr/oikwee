@@ -30,6 +30,7 @@ export function ExpenseHandler({ isEdit, defaultValues }: ExpenseHandlerProps) {
     isEdit,
     expense: defaultValues,
   });
+
   const closeHandler = useCallback(() => {
     const canGoBack =
       typeof window !== 'undefined' &&
@@ -58,8 +59,13 @@ export function ExpenseHandler({ isEdit, defaultValues }: ExpenseHandlerProps) {
             {isEdit ? t('editExpense') : t('newExpense')}
           </DrawerTitle>
         </DrawerHeader>
-        <ScrollArea className="flex-1 min-h-0">
-          <ExpenseForm form={form} formId={EXPENSE_FORM_ID} onSubmit={onSubmit} isEdit={isEdit} />
+        <ScrollArea className="min-h-0 w-full flex-1">
+          <ExpenseForm
+            form={form}
+            formId={EXPENSE_FORM_ID}
+            onSubmit={onSubmit}
+            isEdit={isEdit}
+          />
         </ScrollArea>
         <DrawerFooter className="flex-row">
           <Button type="submit" form={EXPENSE_FORM_ID} disabled={isPending}>

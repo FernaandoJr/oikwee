@@ -6,7 +6,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Progress } from '@/components/ui/progress';
 import { createActionsColumn, createColumn } from '@/lib/tableColumns';
 import type { ColumnDef } from '@tanstack/react-table';
-import { DollarSign, Tag } from 'lucide-react';
+import { Tag } from 'lucide-react';
 import { ExpenseRowActions } from './list/rowActions';
 import type { IExpenseComplete } from './types';
 import {
@@ -47,7 +47,10 @@ export function expenseColumns(
       cell: ({ row }) => {
         const expense = row.original;
         return (
-          <div className="flex items-center justify-center">
+          <div
+            className="flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
             <Checkbox
               checked={row.getValue('isPaid')}
               onCheckedChange={(checked) =>
@@ -76,10 +79,9 @@ export function expenseColumns(
       accessorKey: 'amount',
       label: t('amountLabel'),
       cell: (e) => (
-        <div className="flex items-center gap-1 font-medium">
-          <DollarSign className="text-muted-foreground size-3.5" />
+        <span className="font-medium">
           {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(e.amount)}
-        </div>
+        </span>
       ),
       meta: { variant: 'range' },
       enableSorting: true,

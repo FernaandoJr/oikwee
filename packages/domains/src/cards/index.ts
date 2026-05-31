@@ -15,16 +15,4 @@ export const cardSchema = z.object({
   updatedAt: z.string().optional(),
 });
 
-export const createCardSchema = cardSchema.omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
-
-export const updateCardSchema = cardSchema
-  .omit({ id: true, createdAt: true, updatedAt: true })
-  .partial();
-
 export type CreditCard = z.infer<typeof cardSchema>;
-export type CreateCardInput = z.infer<typeof createCardSchema>;
-export type UpdateCardInput = z.infer<typeof updateCardSchema>;
