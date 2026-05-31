@@ -9,6 +9,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { LanguageSwitcher } from '../languageSwitcher';
 import { ModeToggle } from '../darkMode';
 import { useScroll } from '../sidebar/useScroll';
 
@@ -66,14 +67,14 @@ export function Header({
           <div className="hidden items-center gap-1 md:flex">
             {headerLinks.map((link) => (
               <Link
-                key={link.label}
+                key={link.key}
                 className={cn(
                   buttonVariants({ variant: 'ghost' }),
                   'rounded-md',
                 )}
                 href={link.href}
               >
-                {link.label}
+                {t(link.key)}
               </Link>
             ))}
           </div>
@@ -88,6 +89,7 @@ export function Header({
               </Link>
             </div>
           )}
+          <LanguageSwitcher />
           <ModeToggle />
         </div>
         <Button
@@ -109,7 +111,7 @@ export function Header({
         <div className="grid w-full flex-col gap-y-2">
           {headerLinks.map((link) => (
             <Link
-              key={link.label}
+              key={link.key}
               className={cn(
                 buttonVariants({ variant: 'ghost' }),
                 'justify-start',
@@ -117,7 +119,7 @@ export function Header({
               href={link.href}
               onClick={() => setOpen(false)}
             >
-              {link.label}
+              {t(link.key)}
             </Link>
           ))}
         </div>

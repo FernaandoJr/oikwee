@@ -13,6 +13,23 @@ const eslintConfig = defineConfig([
     'build/**',
     'next-env.d.ts',
   ]),
+  {
+    files: ['**/components/ui/sidebar.tsx'],
+    rules: {
+      'react-hooks/purity': 'off',
+    },
+  },
+  {
+    rules: {
+      'react-hooks/incompatible-library': 'off',
+      '@typescript-eslint/no-unused-vars': ['error', {
+        varsIgnorePattern: '^_|^T[A-Z]',
+        argsIgnorePattern: '^_',
+        destructuredArrayIgnorePattern: '^_',
+        caughtErrorsIgnorePattern: '^_',
+      }],
+    },
+  },
 ]);
 
 export default eslintConfig;

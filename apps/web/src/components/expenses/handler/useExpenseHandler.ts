@@ -1,65 +1,68 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
-import { expensesQueryKeys } from '../lib/queryKeys';
+import { PatchDiff, PayloadBuilder } from '@/lib/payload';
 import { zodV4Resolver } from '../lib/resolver';
 import { expensesService } from '../services';
 import {
   createExpenseSchema,
   updateExpenseSchema,
-  type CreateExpenseInput,
-  type Expense,
-  type UpdateExpenseInput,
+  type IExpenseComplete,
 } from '../types';
 
 const expenseFormSchema = createExpenseSchema.superRefine((data, ctx) => {
-  if (!data.description || data.description.trim().length === 0) {
+  if (!data.name || data.name.trim().length === 0) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      message: 'Descrição é obrigatória',
-      path: ['description'],
+      message: 'Nome é obrigatório',
+      path: ['name'],
     });
   }
 });
 
-export type ExpenseFormValues = CreateExpenseInput;
+export type ExpenseFormValues = z.infer<typeof expenseFormSchema>;
 
-const defaultFormValues: ExpenseFormValues = {
-  description: '',
-  category: '',
+const defaultFormValues: Partial<ExpenseFormValues> = {
+  name: '',
   amount: 0,
-  date: '',
-  dueDate: '',
+  category: undefined,
+  type: 'subscription',
+  recurrenceInterval: 'monthly',
+  status: 'active',
+  startDate: new Date().toISOString().split('T')[0],
+  installmentsTotal: undefined,
   isPaid: false,
-  expenseType: 3,
-  recurrenceInterval: undefined,
-  installments: undefined,
-  parentId: undefined,
-  paymentMethod: '',
-  status: 2,
+  dueDay: undefined,
+  creditCardId: undefined,
+  paymentMethod: undefined,
+  notes: '',
 };
 
-function expenseToFormValues(expense: Expense): ExpenseFormValues {
+function expenseToFormValues(
+  expense: IExpenseComplete,
+): Partial<ExpenseFormValues> {
   return {
-    description: expense.description ?? '',
-    category: expense.category,
+    name: expense.name,
     amount: expense.amount,
-    date: expense.date,
-    dueDate: expense.dueDate ?? '',
-    isPaid: expense.isPaid,
-    expenseType: expense.expenseType ?? 3,
+    category: expense.category,
+    type: expense.type,
     recurrenceInterval: expense.recurrenceInterval,
-    installments: expense.installments,
-    parentId: expense.parentId,
-    paymentMethod: expense.paymentMethod ?? '',
-    status: expense.status ?? 2,
+    status: expense.status,
+    startDate: expense.startDate,
+    installmentsTotal: expense.installmentsTotal,
+    isPaid: expense.isPaid,
+    dueDay: expense.dueDay,
+    creditCardId: expense.creditCardId,
+    paymentMethod: expense.paymentMethod,
+    notes: expense.notes ?? '',
   };
 }
 
 interface UseExpenseHandlerProps {
   isEdit: boolean;
-  expense?: Expense;
+  expense?: IExpenseComplete;
 }
 
 export function useExpenseHandler({ isEdit, expense }: UseExpenseHandlerProps) {
@@ -75,29 +78,51 @@ export function useExpenseHandler({ isEdit, expense }: UseExpenseHandlerProps) {
   });
 
   const createMutation = useMutation({
-    mutationFn: (values: CreateExpenseInput) => expensesService.create(values),
+    mutationFn: (values: Partial<IExpenseComplete>) => {
+      const payload = PayloadBuilder().from(values);
+      return expensesService.create(payload);
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: expensesQueryKeys.list() });
+      queryClient.invalidateQueries({ queryKey: ['expenses'] });
       router.back();
+    },
+    onError: () => {
+      toast.error('Erro ao criar despesa');
     },
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, values }: { id: string; values: UpdateExpenseInput }) =>
-      expensesService.patch(id, values),
+    mutationFn: ({
+      id,
+      values,
+    }: {
+      id: string;
+      values: Partial<IExpenseComplete>;
+    }) => {
+      const payload = new PatchDiff().diff(values, expense!);
+      return expensesService.patch(id, payload);
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: expensesQueryKeys.list() });
+      queryClient.invalidateQueries({ queryKey: ['expenses'] });
       router.back();
+    },
+    onError: () => {
+      toast.error('Erro ao salvar despesa');
     },
   });
 
-  const onSubmit = form.handleSubmit((values) => {
-    if (isEdit && expense?.id) {
-      updateMutation.mutate({ id: expense.id, values });
-    } else {
-      createMutation.mutate(values);
-    }
-  });
+  const onSubmit = form.handleSubmit(
+    (values) => {
+      if (isEdit && expense?.id) {
+        updateMutation.mutate({ id: expense.id, values });
+      } else {
+        createMutation.mutate(values as Partial<IExpenseComplete>);
+      }
+    },
+    () => {
+      toast.error('Preencha todos os campos obrigatórios');
+    },
+  );
 
   return {
     form,

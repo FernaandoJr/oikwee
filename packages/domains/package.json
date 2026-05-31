@@ -11,6 +11,16 @@
       "types": "./dist/expenses/index.d.ts",
       "import": "./dist/expenses/index.js",
       "default": "./dist/expenses/index.js"
+    },
+    "./cards": {
+      "types": "./dist/cards/index.d.ts",
+      "import": "./dist/cards/index.js",
+      "default": "./dist/cards/index.js"
+    },
+    "./pagination": {
+      "types": "./dist/pagination.d.ts",
+      "import": "./dist/pagination.js",
+      "default": "./dist/pagination.js"
     }
   },
   "devDependencies": {

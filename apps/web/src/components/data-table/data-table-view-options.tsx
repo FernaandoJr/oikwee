@@ -2,9 +2,11 @@
 "use no memo";
 
 import type { Table } from "@tanstack/react-table";
+import { useTranslation } from "@repo/i18n";
 import { Check, Settings2 } from "lucide-react";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   Command,
   CommandEmpty,
@@ -24,13 +26,16 @@ interface DataTableViewOptionsProps<TData>
   extends React.ComponentProps<typeof PopoverContent> {
   table: Table<TData>;
   disabled?: boolean;
+  buttonClassName?: string;
 }
 
 export function DataTableViewOptions<TData>({
   table,
   disabled,
+  buttonClassName,
   ...props
 }: DataTableViewOptionsProps<TData>) {
+  const { t } = useTranslation();
   const columns = React.useMemo(
     () =>
       table
@@ -44,24 +49,30 @@ export function DataTableViewOptions<TData>({
 
   return (
     <Popover>
-      <PopoverTrigger asChild>
-        <Button
-          aria-label="Toggle columns"
-          role="combobox"
-          variant="outline"
-          size="sm"
-          className="ml-auto hidden h-8 font-normal lg:flex"
-          disabled={disabled}
-        >
-          <Settings2 className="text-muted-foreground" />
-          View
-        </Button>
-      </PopoverTrigger>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <PopoverTrigger asChild>
+              <Button
+                aria-label="Toggle columns"
+                role="combobox"
+                variant="outline"
+                size="icon-sm"
+                className={buttonClassName}
+                disabled={disabled}
+              >
+                <Settings2 className="text-muted-foreground" />
+              </Button>
+            </PopoverTrigger>
+          </TooltipTrigger>
+          <TooltipContent>{t('view')}</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
       <PopoverContent className="w-44 p-0" {...props}>
         <Command>
-          <CommandInput placeholder="Search columns..." />
+          <CommandInput placeholder={t('searchColumns')} />
           <CommandList>
-            <CommandEmpty>No columns found.</CommandEmpty>
+            <CommandEmpty>{t('noColumnsFound')}</CommandEmpty>
             <CommandGroup>
               {columns.map((column) => (
                 <CommandItem

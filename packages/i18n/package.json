@@ -8,8 +8,7 @@
   "exports": {
     ".": "./index.ts",
     "./locales/ptBR/common.json": "./locales/ptBR/common.json",
-    "./locales/enUS/common.json": "./locales/enUS/common.json",
-    "./locales/itIT/common.json": "./locales/itIT/common.json"
+    "./locales/enUS/common.json": "./locales/enUS/common.json"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",

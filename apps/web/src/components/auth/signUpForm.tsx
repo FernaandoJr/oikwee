@@ -33,11 +33,7 @@ interface SignUpFormValues {
   confirmPassword: string;
 }
 
-interface SignUpFormProps {
-  handleSignIn?: () => void;
-}
-
-export function SignUpForm({ handleSignIn }: SignUpFormProps) {
+export function SignUpForm() {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [githubLoading, setGithubLoading] = useState(false);
   const [discordLoading, setDiscordLoading] = useState(false);

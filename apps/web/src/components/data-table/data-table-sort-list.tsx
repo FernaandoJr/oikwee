@@ -1,5 +1,6 @@
 "use client";
 "use no memo";
+import { useTranslation } from "@repo/i18n";
 
 import type { ColumnSort, SortDirection, Table } from "@tanstack/react-table";
 import {
@@ -12,6 +13,7 @@ import * as React from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   Command,
   CommandEmpty,
@@ -49,13 +51,16 @@ interface DataTableSortListProps<TData>
   extends React.ComponentProps<typeof PopoverContent> {
   table: Table<TData>;
   disabled?: boolean;
+  buttonClassName?: string;
 }
 
 export function DataTableSortList<TData>({
   table,
   disabled,
+  buttonClassName,
   ...props
 }: DataTableSortListProps<TData>) {
+  const { t } = useTranslation();
   const id = React.useId();
   const labelId = React.useId();
   const descriptionId = React.useId();
@@ -168,26 +173,32 @@ export function DataTableSortList<TData>({
       getItemValue={(item) => item.id}
     >
       <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            size="sm"
-            className="font-normal"
-            onKeyDown={onTriggerKeyDown}
-            disabled={disabled}
-          >
-            <ArrowDownUp className="text-muted-foreground" />
-            Sort
-            {sorting.length > 0 && (
-              <Badge
-                variant="secondary"
-                className="h-[18.24px] rounded-[3.2px] px-[5.12px] font-mono font-normal text-[10.4px]"
-              >
-                {sorting.length}
-              </Badge>
-            )}
-          </Button>
-        </PopoverTrigger>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon-sm"
+                  className={cn(buttonClassName)}
+                  onKeyDown={onTriggerKeyDown}
+                  disabled={disabled}
+                >
+                  <ArrowDownUp className="text-muted-foreground" />
+                  {sorting.length > 0 && (
+                    <Badge
+                      variant="secondary"
+                      className="absolute -top-1.5 -right-1.5 h-4 min-w-4 rounded-full px-1 font-mono text-[10px]"
+                    >
+                      {sorting.length}
+                    </Badge>
+                  )}
+                </Button>
+              </PopoverTrigger>
+            </TooltipTrigger>
+            <TooltipContent>{t('sort')}</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
         <PopoverContent
           aria-labelledby={labelId}
           aria-describedby={descriptionId}
@@ -196,7 +207,7 @@ export function DataTableSortList<TData>({
         >
           <div className="flex flex-col gap-1">
             <h4 id={labelId} className="font-medium leading-none">
-              {sorting.length > 0 ? "Sort by" : "No sorting applied"}
+              {sorting.length > 0 ? t('sortBy') : t('noSortingApplied')}
             </h4>
             <p
               id={descriptionId}
@@ -205,9 +216,7 @@ export function DataTableSortList<TData>({
                 sorting.length > 0 && "sr-only",
               )}
             >
-              {sorting.length > 0
-                ? "Modify sorting to organize your rows."
-                : "Add sorting to organize your rows."}
+              {sorting.length > 0 ? t('modifySortingHint') : t('addSortingHint')}
             </p>
           </div>
           {sorting.length > 0 && (
@@ -238,7 +247,7 @@ export function DataTableSortList<TData>({
               onClick={onSortAdd}
               disabled={columns.length === 0}
             >
-              Add sort
+              {t('addSort')}
             </Button>
             {sorting.length > 0 && (
               <Button
@@ -247,7 +256,7 @@ export function DataTableSortList<TData>({
                 className="rounded"
                 onClick={onSortingReset}
               >
-                Reset sorting
+                {t('resetSorting')}
               </Button>
             )}
           </div>
@@ -282,6 +291,7 @@ function DataTableSortItem({
   onSortUpdate,
   onSortRemove,
 }: DataTableSortItemProps) {
+  const { t } = useTranslation();
   const fieldListboxId = `${sortItemId}-field-listbox`;
   const fieldTriggerId = `${sortItemId}-field-trigger`;
   const directionListboxId = `${sortItemId}-direction-listbox`;
@@ -338,9 +348,9 @@ function DataTableSortItem({
             className="w-(--radix-popover-trigger-width) p-0"
           >
             <Command>
-              <CommandInput placeholder="Search fields..." />
+              <CommandInput placeholder={t('searchFields')} />
               <CommandList>
-                <CommandEmpty>No fields found.</CommandEmpty>
+                <CommandEmpty>{t('noColumnsFound')}</CommandEmpty>
                 <CommandGroup>
                   {columns.map((column) => (
                     <CommandItem

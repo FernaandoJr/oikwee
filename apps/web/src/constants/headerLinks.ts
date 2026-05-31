@@ -1,12 +1,4 @@
-import { t } from '@repo/i18n';
-
 export const headerLinks = [
-  {
-    label: t('features'),
-    href: '#',
-  },
-  {
-    label: t('about'),
-    href: '#about',
-  },
-];
+  { key: 'features', href: '#' },
+  { key: 'about', href: '#about' },
+] as const;

@@ -5,6 +5,7 @@ import {
   Bell,
   Check,
   ChevronsUpDown,
+  Globe,
   Home,
   LogOut,
   Monitor,
@@ -14,6 +15,13 @@ import {
 import { useTheme } from 'next-themes';
 
 import { useSignOut } from '@/auth';
+import i18n, { useTranslation } from '@repo/i18n';
+import Image from 'next/image';
+
+function setLanguage(locale: string) {
+  document.cookie = `NEXT_LOCALE=${locale}; path=/; max-age=31536000; SameSite=Lax`;
+  i18n.changeLanguage(locale);
+}
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -22,6 +30,9 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
@@ -47,6 +58,13 @@ export function NavUser({
   const { theme, setTheme } = useTheme();
   const { mutate: signOut, isPending: isSigningOut } = useSignOut();
   const router = useRouter();
+  const { t, i18n: i18nCtx } = useTranslation();
+  const lang = i18nCtx.language;
+
+  const languages = [
+    { name: 'ptBR', label: 'portuguese', image: '/pt-br.svg' },
+    { name: 'enUS', label: 'english', image: '/en.svg' },
+  ];
 
   return (
     <SidebarMenu>
@@ -106,39 +124,55 @@ export function NavUser({
             <DropdownMenuGroup>
               <DropdownMenuItem onClick={() => router.push('/')}>
                 <Home />
-                Home Page
+                {t('homePage')}
               </DropdownMenuItem>
               <DropdownMenuGroup>
                 <DropdownMenuItem>
                   <BadgeCheck />
-                  Account
+                  {t('account')}
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <Bell />
-                  Notifications
+                  {t('notifications')}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
               </DropdownMenuGroup>
               <DropdownMenuItem onClick={() => setTheme('dark')}>
                 <Moon />
-                Dark Mode
+                {t('darkMode')}
                 {theme === 'dark' && <Check className="ml-auto" />}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setTheme('light')}>
                 <Sun />
-                Light Mode
+                {t('lightMode')}
                 {theme === 'light' && <Check className="ml-auto" />}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setTheme('system')}>
                 <Monitor />
-                System Mode
+                {t('systemMode')}
                 {theme === 'system' && <Check className="ml-auto" />}
               </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger>
+                  <Globe className="size-4" />
+                  {t('languages')}
+                </DropdownMenuSubTrigger>
+                <DropdownMenuSubContent>
+                  {languages.map((l) => (
+                    <DropdownMenuItem key={l.name} onClick={() => setLanguage(l.name)}>
+                      <Image src={l.image} alt={l.label} width={16} height={12} />
+                      {t(l.label)}
+                      {lang === l.name && <Check className="ml-auto size-4" />}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
             </DropdownMenuGroup>
 
             <DropdownMenuItem onClick={() => signOut()} disabled={isSigningOut}>
               <LogOut />
-              Log out
+              {t('logout')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

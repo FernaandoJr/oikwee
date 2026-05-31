@@ -2,10 +2,9 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { authService } from './service';
-import { clearAccessToken, getToken } from './storage';
+import { getToken } from './storage';
 import type { AuthSession, AuthUser, MeResponse } from './types';
 
 export function useUser(): {
@@ -15,17 +14,8 @@ export function useUser(): {
   error: Error | null;
   refetch: () => void;
 } {
-  const [hasToken, setHasToken] = useState(false);
-  const router = useRouter();
   const token = getToken();
-
-  useEffect(() => {
-    if (!token) {
-      clearAccessToken();
-      router.refresh();
-    }
-    setHasToken(!!token);
-  }, [token]);
+  const hasToken = !!token;
 
   const { data, isLoading, error, refetch } = useQuery<MeResponse>({
     queryKey: ['user'],

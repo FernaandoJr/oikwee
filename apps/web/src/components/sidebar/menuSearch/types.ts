@@ -20,4 +20,5 @@ export interface MenuItemWithPath extends MenuOptionItem {
 export interface MenuSearchProps {
   items: MenuOptionItem[];
   actions?: MenuActionItem[];
+  triggerClassName?: string;
 }

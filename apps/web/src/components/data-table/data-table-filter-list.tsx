@@ -16,6 +16,7 @@ import * as React from "react";
 import { DataTableRangeFilter } from "@/components/data-table/data-table-range-filter";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Command,
@@ -63,6 +64,7 @@ import { formatDate } from "@/lib/format";
 import { generateId } from "@/lib/id";
 import { getFiltersStateParser } from "@/lib/parsers";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@repo/i18n";
 import type {
   ExtendedColumnFilter,
   FilterOperator,
@@ -81,6 +83,7 @@ interface DataTableFilterListProps<TData>
   throttleMs?: number;
   shallow?: boolean;
   disabled?: boolean;
+  buttonClassName?: string;
 }
 
 export function DataTableFilterList<TData>({
@@ -89,8 +92,10 @@ export function DataTableFilterList<TData>({
   throttleMs = THROTTLE_MS,
   shallow = true,
   disabled,
+  buttonClassName,
   ...props
 }: DataTableFilterListProps<TData>) {
+  const { t } = useTranslation();
   const id = React.useId();
   const labelId = React.useId();
   const descriptionId = React.useId();
@@ -223,26 +228,32 @@ export function DataTableFilterList<TData>({
       getItemValue={(item) => item.filterId}
     >
       <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            size="sm"
-            className="font-normal"
-            onKeyDown={onTriggerKeyDown}
-            disabled={disabled}
-          >
-            <ListFilter className="text-muted-foreground" />
-            Filter
-            {filters.length > 0 && (
-              <Badge
-                variant="secondary"
-                className="h-[18.24px] rounded-[3.2px] px-[5.12px] font-mono font-normal text-[10.4px]"
-              >
-                {filters.length}
-              </Badge>
-            )}
-          </Button>
-        </PopoverTrigger>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon-sm"
+                  className={cn(buttonClassName)}
+                  onKeyDown={onTriggerKeyDown}
+                  disabled={disabled}
+                >
+                  <ListFilter className="text-muted-foreground" />
+                  {filters.length > 0 && (
+                    <Badge
+                      variant="secondary"
+                      className="absolute -top-1.5 -right-1.5 h-4 min-w-4 rounded-full px-1 font-mono text-[10px]"
+                    >
+                      {filters.length}
+                    </Badge>
+                  )}
+                </Button>
+              </PopoverTrigger>
+            </TooltipTrigger>
+            <TooltipContent>{t('filterButton')}</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
         <PopoverContent
           aria-describedby={descriptionId}
           aria-labelledby={labelId}
@@ -251,7 +262,7 @@ export function DataTableFilterList<TData>({
         >
           <div className="flex flex-col gap-1">
             <h4 id={labelId} className="font-medium leading-none">
-              {filters.length > 0 ? "Filters" : "No filters applied"}
+              {filters.length > 0 ? t('filterButton') : t('noFiltersApplied')}
             </h4>
             <p
               id={descriptionId}
@@ -260,9 +271,7 @@ export function DataTableFilterList<TData>({
                 filters.length > 0 && "sr-only",
               )}
             >
-              {filters.length > 0
-                ? "Modify filters to refine your rows."
-                : "Add filters to refine your rows."}
+              {filters.length > 0 ? t('modifyFiltersHint') : t('addFiltersHint')}
             </p>
           </div>
           {filters.length > 0 ? (
@@ -294,7 +303,7 @@ export function DataTableFilterList<TData>({
               ref={addButtonRef}
               onClick={onFilterAdd}
             >
-              Add filter
+              {t('addFilter')}
             </Button>
             {filters.length > 0 ? (
               <Button
@@ -303,7 +312,7 @@ export function DataTableFilterList<TData>({
                 className="rounded"
                 onClick={onFiltersReset}
               >
-                Reset filters
+                {t('resetFilters')}
               </Button>
             ) : null}
           </div>
@@ -347,6 +356,7 @@ function DataTableFilterItem<TData>({
   onFilterUpdate,
   onFilterRemove,
 }: DataTableFilterItemProps<TData>) {
+  const { t } = useTranslation();
   const [showFieldSelector, setShowFieldSelector] = React.useState(false);
   const [showOperatorSelector, setShowOperatorSelector] = React.useState(false);
   const [showValueSelector, setShowValueSelector] = React.useState(false);
@@ -454,7 +464,7 @@ function DataTableFilterItem<TData>({
             className="w-40 p-0"
           >
             <Command>
-              <CommandInput placeholder="Search fields..." />
+              <CommandInput placeholder={t('searchFields')} />
               <CommandList>
                 <CommandEmpty>No fields found.</CommandEmpty>
                 <CommandGroup>

@@ -22,6 +22,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
+import { cn } from '@/lib/utils';
 import type { MenuActionItem, MenuOptionItem, MenuSearchProps } from './types';
 import {
   flattenMenuItems,
@@ -33,7 +34,7 @@ import {
 
 export type { MenuActionItem, MenuOptionItem, MenuSearchProps } from './types';
 
-export function MenuSearch({ items, actions = [] }: MenuSearchProps) {
+export function MenuSearch({ items, actions = [], triggerClassName }: MenuSearchProps) {
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [recentSearches, setRecentSearches] =
@@ -57,8 +58,8 @@ export function MenuSearch({ items, actions = [] }: MenuSearchProps) {
         setOpen((prev) => !prev);
       }
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown, true);
+    return () => window.removeEventListener('keydown', handleKeyDown, true);
   }, []);
 
   const handleSelectPage = (item: MenuOptionItem) => {
@@ -91,7 +92,7 @@ export function MenuSearch({ items, actions = [] }: MenuSearchProps) {
       <Button
         size="sm"
         variant="outline"
-        className="w-full cursor-pointer justify-start text-left"
+        className={cn('w-full cursor-pointer justify-start text-left', triggerClassName)}
         onClick={() => setOpen(true)}
       >
         <Search className="size-4 shrink-0" />

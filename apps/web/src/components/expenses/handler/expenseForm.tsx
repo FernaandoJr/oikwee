@@ -25,56 +25,74 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { cn } from '@/lib/utils';
+import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { CalendarIcon } from 'lucide-react';
+import { useTranslation } from '@repo/i18n';
 import type { UseFormReturn } from 'react-hook-form';
-import { CATEGORIES, PAYMENT_METHODS } from '../lib/enums';
+import { cardsQueryKeys, cardsService } from '../../cards/services';
+import {
+  CATEGORIES,
+  EXPENSE_STATUSES,
+  EXPENSE_STATUS_LABELS,
+  EXPENSE_TYPES,
+  EXPENSE_TYPE_LABELS,
+  PAYMENT_METHODS,
+  RECURRENCE_INTERVALS,
+  RECURRENCE_INTERVAL_LABELS,
+} from '../types';
 import type { ExpenseFormValues } from './useExpenseHandler';
 
 interface ExpenseFormProps {
   form: UseFormReturn<ExpenseFormValues>;
   formId: string;
   onSubmit: (e?: React.BaseSyntheticEvent) => Promise<void>;
+  isEdit?: boolean;
 }
 
-export function ExpenseForm({ form, formId, onSubmit }: ExpenseFormProps) {
+export function ExpenseForm({ form, formId, onSubmit, isEdit }: ExpenseFormProps) {
+  const { t } = useTranslation();
+  const type = form.watch('type');
+
+  const { data: cards = [] } = useQuery({
+    queryKey: cardsQueryKeys.list(),
+    queryFn: () => cardsService.get(),
+  });
+
   return (
     <Form {...form}>
       <form id={formId} onSubmit={onSubmit} className="flex flex-col gap-4 p-4">
         <FormField
           control={form.control}
-          name="description"
+          name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Descrição</FormLabel>
+              <FormLabel>{t('name')}</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="Ex: Supermercado"
-                  {...field}
-                  value={field.value ?? ''}
-                />
+                <Input placeholder={t('expenseNamePlaceholder')} {...field} value={field.value ?? ''} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
-          name="category"
+          name="type"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Categoria</FormLabel>
+              <FormLabel>{t('type')}</FormLabel>
               <Select onValueChange={field.onChange} value={field.value ?? ''}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Selecione" />
+                    <SelectValue placeholder={t('select')} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {CATEGORIES.map((c) => (
-                    <SelectItem key={c} value={c}>
-                      {c}
+                  {EXPENSE_TYPES.map((t) => (
+                    <SelectItem key={t} value={t}>
+                      {EXPENSE_TYPE_LABELS[t]}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -83,12 +101,13 @@ export function ExpenseForm({ form, formId, onSubmit }: ExpenseFormProps) {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="amount"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Valor</FormLabel>
+              <FormLabel>{t('amountLabel')}</FormLabel>
               <FormControl>
                 <Input
                   type="number"
@@ -104,12 +123,88 @@ export function ExpenseForm({ form, formId, onSubmit }: ExpenseFormProps) {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
-          name="date"
+          name="category"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Data</FormLabel>
+              <FormLabel>{t('category')}</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value ?? ''}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('select')} />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {CATEGORIES.map((c) => (
+                    <SelectItem key={c} value={c}>
+                      {c}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {type === 'subscription' && (
+          <FormField
+            control={form.control}
+            name="recurrenceInterval"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t('recurrenceInterval')}</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value ?? ''}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder={t('select')} />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {RECURRENCE_INTERVALS.map((r) => (
+                      <SelectItem key={r} value={r}>
+                        {RECURRENCE_INTERVAL_LABELS[r]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
+
+        {type === 'installment' && (
+          <FormField
+            control={form.control}
+            name="installmentsTotal"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t('totalInstallments')}</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    min={1}
+                    placeholder={t('totalInstallmentsPlaceholder')}
+                    {...field}
+                    value={field.value ?? ''}
+                    onChange={(e) => field.onChange(Number(e.target.value) || undefined)}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
+
+        <FormField
+          control={form.control}
+          name="startDate"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t('startDate')}</FormLabel>
               <Popover>
                 <PopoverTrigger asChild>
                   <FormControl>
@@ -122,28 +217,16 @@ export function ExpenseForm({ form, formId, onSubmit }: ExpenseFormProps) {
                     >
                       <CalendarIcon className="mr-2 size-4" />
                       {field.value
-                        ? format(
-                            new Date(field.value + 'T12:00:00'),
-                            'dd/MM/yyyy',
-                            {
-                              locale: ptBR,
-                            },
-                          )
-                        : 'Selecione a data'}
+                        ? format(new Date(field.value + 'T12:00:00'), 'dd/MM/yyyy', { locale: ptBR })
+                        : t('selectDate')}
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
                     mode="single"
-                    selected={
-                      field.value
-                        ? new Date(field.value + 'T12:00:00')
-                        : undefined
-                    }
-                    onSelect={(date) =>
-                      field.onChange(date ? format(date, 'yyyy-MM-dd') : '')
-                    }
+                    selected={field.value ? new Date(field.value + 'T12:00:00') : undefined}
+                    onSelect={(date) => field.onChange(date ? format(date, 'yyyy-MM-dd') : '')}
                     locale={ptBR}
                   />
                 </PopoverContent>
@@ -152,60 +235,89 @@ export function ExpenseForm({ form, formId, onSubmit }: ExpenseFormProps) {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
-          name="dueDate"
+          name="dueDay"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Vencimento (opcional)</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        'w-full justify-start text-left font-normal',
-                        !field.value && 'text-muted-foreground',
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 size-4" />
-                      {field.value
-                        ? format(
-                            new Date(field.value + 'T12:00:00'),
-                            'dd/MM/yyyy',
-                            {
-                              locale: ptBR,
-                            },
-                          )
-                        : 'Opcional'}
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={
-                      field.value
-                        ? new Date(field.value + 'T12:00:00')
-                        : undefined
-                    }
-                    onSelect={(date) =>
-                      field.onChange(date ? format(date, 'yyyy-MM-dd') : '')
-                    }
-                    locale={ptBR}
-                  />
-                </PopoverContent>
-              </Popover>
+              <FormLabel>{t('chargeDayOptional')}</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  min={1}
+                  max={31}
+                  placeholder={t('dayPlaceholder')}
+                  {...field}
+                  value={field.value ?? ''}
+                  onChange={(e) => field.onChange(Number(e.target.value) || undefined)}
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
+        <FormField
+          control={form.control}
+          name="creditCardId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t('cardOptional')}</FormLabel>
+              <Select
+                onValueChange={(v) => field.onChange(v === '__none__' ? undefined : v)}
+                value={field.value ?? '__none__'}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('none')} />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="__none__">{t('none')}</SelectItem>
+                  {cards.map((card) => (
+                    <SelectItem key={card.id} value={card.id!}>
+                      {card.name} — {card.bank}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="paymentMethod"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t('paymentMethodOptional')}</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value ?? ''}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('optional')} />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {PAYMENT_METHODS.map((m) => (
+                    <SelectItem key={m} value={m}>
+                      {m}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="isPaid"
           render={({ field }) => (
             <FormItem className="flex items-center justify-between rounded-lg border p-4">
-              <FormLabel className="cursor-pointer">Pago</FormLabel>
+              <FormLabel className="cursor-pointer">{t('paid')}</FormLabel>
               <FormControl>
                 <Switch
                   checked={field.value ?? false}
@@ -217,26 +329,42 @@ export function ExpenseForm({ form, formId, onSubmit }: ExpenseFormProps) {
           )}
         />
 
+        {isEdit && (
+          <FormField
+            control={form.control}
+            name="status"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t('status')}</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value ?? 'active'}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder={t('status')} />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {EXPENSE_STATUSES.map((s) => (
+                      <SelectItem key={s} value={s}>
+                        {EXPENSE_STATUS_LABELS[s]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
+
         <FormField
           control={form.control}
-          name="paymentMethod"
+          name="notes"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Forma de pagamento (opcional)</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value ?? ''}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Opcional" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {PAYMENT_METHODS.map((m) => (
-                    <SelectItem key={m} value={m}>
-                      {m}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <FormLabel>{t('notesOptional')}</FormLabel>
+              <FormControl>
+                <Input placeholder={t('notesPlaceholder')} {...field} value={field.value ?? ''} />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
